@@ -1,159 +1,167 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { signupUser } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
 
-const PLACEHOLDER_COLOR = 'rgba(236, 253, 245, 0.5)';
-
-type Props = {
-  onNavigateToLogin: () => void;
+type AuthStackParamList = {
+  Signup: undefined;
+  Login: undefined;
+  Home: undefined;
 };
 
-export function SignupScreen({
-  onNavigateToLogin,
-}: Readonly<Props>) {
+type Props = NativeStackScreenProps<AuthStackParamList, 'Signup'>;
+
+const PLACEHOLDER_COLOR = 'rgba(236, 253, 245, 0.5)';
+
+export function SignupScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
   const { status, error } = useAppSelector(state => state.auth);
 
-  const [name, setName] = React.useState('');
-  const [mobile, setMobile] = React.useState('');
-  const [carNumber, setCarNumber] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [email, setEmail] = React.useState('');
+  const [name, setName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [carNumber, setCarNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
 
   const isLoading = status === 'loading';
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (isLoading) {
       return;
     }
 
-    // Validate required fields
     if (!name.trim() || !mobile.trim() || !carNumber.trim() || !password.trim()) {
       return;
     }
 
-    // deviceId will be generated automatically in authSlice
-    dispatch(signupUser({ name, mobile, carNumber, password, email: email.trim() || undefined }));
+    const result = await dispatch(
+      signupUser({ name, mobile, carNumber, password, email: email.trim() || undefined }),
+    );
+
+    if (signupUser.fulfilled.match(result)) {
+      // Navigate to Login after successful signup
+      navigation.replace('Login');
+    }
   };
 
   return (
-    <ImageBackground
-      source={CNG_BACKGROUND_IMAGE}
-      style={styles.background}
-      imageStyle={styles.backgroundImage}>
-      <View pointerEvents="none" style={styles.backdrop} />
+    <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
+      <View style={styles.backdrop} />
       <KeyboardAvoidingView
         style={styles.keyboard}
         behavior={Platform.select({ ios: 'padding', android: undefined })}>
-        <View style={styles.content}>
-          <View style={styles.hero}>
-            <Text style={styles.badge}>Launch a cleaner lane</Text>
-            <Text style={styles.heroTitle}>Spin up a green ops identity</Text>
-            <Text style={styles.heroSubtitle}>
-              Onboard dispatch leads, fueling partners, and site managers under
-              one secure workspace.
-            </Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.kicker}>Create access</Text>
-            <Text style={styles.title}>Sign up for CNG Tracker</Text>
-            <Text style={styles.subtitle}>
-              Provision a new operator identity with elevated fueling insights.
-            </Text>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Full name</Text>
-              <TextInput
-                value={name}
-                onChangeText={setName}
-                placeholder="Alex Rivera"
-                placeholderTextColor={PLACEHOLDER_COLOR}
-                style={styles.input}
-                autoCapitalize="words"
-              />
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Mobile number *</Text>
-              <TextInput
-                value={mobile}
-                onChangeText={setMobile}
-                placeholder="9876543210"
-                placeholderTextColor={PLACEHOLDER_COLOR}
-                keyboardType="phone-pad"
-                style={styles.input}
-                maxLength={10}
-              />
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Car number *</Text>
-              <TextInput
-                value={carNumber}
-                onChangeText={setCarNumber}
-                placeholder="GJ01AB1234"
-                placeholderTextColor={PLACEHOLDER_COLOR}
-                style={styles.input}
-                autoCapitalize="characters"
-              />
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Password *</Text>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="••••••••"
-                placeholderTextColor={PLACEHOLDER_COLOR}
-                secureTextEntry
-                style={styles.input}
-              />
-            </View>
-
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Email (optional)</Text>
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="you@company.com"
-                placeholderTextColor={PLACEHOLDER_COLOR}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                style={styles.input}
-              />
-            </View>
-
-            {!!error && <Text style={styles.errorText}>{error}</Text>}
-
-            <Pressable
-              style={[styles.primaryButton, isLoading && styles.disabledButton]}
-              onPress={handleSubmit}>
-              <Text style={styles.primaryButtonText}>
-                {isLoading ? 'Creating account…' : 'Create account'}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          <View style={styles.container}>
+            <View style={styles.hero}>
+              <Text style={styles.badge}>CNG Tracker</Text>
+              <Text style={styles.heroTitle}>Create Account</Text>
+              <Text style={styles.heroSubtitle}>
+                Join us to find the nearest CNG stations and track availability in real-time
               </Text>
-            </Pressable>
+            </View>
 
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>Already have access?</Text>
-              <Pressable onPress={onNavigateToLogin}>
-                <Text style={styles.linkText}>Log in</Text>
+            <View style={styles.card}>
+              <Text style={styles.kicker}>Get Started</Text>
+              <Text style={styles.title}>Sign up for CNG Tracker</Text>
+              <Text style={styles.subtitle}>Fill in your details to create your account</Text>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Full Name *</Text>
+                <TextInput
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="John Doe"
+                  placeholderTextColor={PLACEHOLDER_COLOR}
+                  style={styles.input}
+                  autoCapitalize="words"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Mobile Number *</Text>
+                <TextInput
+                  value={mobile}
+                  onChangeText={setMobile}
+                  placeholder="9876543210"
+                  placeholderTextColor={PLACEHOLDER_COLOR}
+                  keyboardType="phone-pad"
+                  style={styles.input}
+                  maxLength={10}
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Car Number *</Text>
+                <TextInput
+                  value={carNumber}
+                  onChangeText={setCarNumber}
+                  placeholder="GJ01AB1234"
+                  placeholderTextColor={PLACEHOLDER_COLOR}
+                  style={styles.input}
+                  autoCapitalize="characters"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Password *</Text>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="••••••••"
+                  placeholderTextColor={PLACEHOLDER_COLOR}
+                  secureTextEntry
+                  style={styles.input}
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Email (Optional)</Text>
+                <TextInput
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="you@example.com"
+                  placeholderTextColor={PLACEHOLDER_COLOR}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  style={styles.input}
+                />
+              </View>
+
+              {!!error && <Text style={styles.errorText}>{error}</Text>}
+
+              <Pressable
+                style={[styles.primaryButton, isLoading && styles.disabledButton]}
+                onPress={handleSubmit}
+                disabled={isLoading}>
+                <Text style={styles.primaryButtonText}>
+                  {isLoading ? 'Creating Account...' : 'Create Account'}
+                </Text>
               </Pressable>
+
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>Already have an account?</Text>
+                <Pressable onPress={() => navigation.navigate('Login')}>
+                  <Text style={styles.linkText}>Log in</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </ImageBackground>
   );
@@ -165,7 +173,9 @@ const styles = StyleSheet.create({
     backgroundColor: cngColors.primaryDark,
   },
   backgroundImage: {
-    transform: [{ scale: 1.1 }],
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   backdrop: {
     position: 'absolute',
@@ -173,46 +183,49 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(2, 15, 9, 0.82)',
+    backgroundColor: 'rgba(2, 15, 9, 0.75)',
   },
   keyboard: {
     flex: 1,
   },
-  content: {
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1,
     padding: 24,
-    gap: 28,
     justifyContent: 'center',
   },
+  container: {
+    gap: 28,
+  },
   hero: {
-    gap: 12,
+    gap: 16,
     maxWidth: 420,
   },
   badge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 999,
     borderWidth: 1,
     borderColor: cngColors.border,
     color: cngColors.textOnDark,
     fontWeight: '600',
-    letterSpacing: 0.6,
-    backgroundColor: 'rgba(155, 225, 93, 0.25)',
+    letterSpacing: 1,
     textTransform: 'uppercase',
+    backgroundColor: 'rgba(15, 157, 88, 0.25)',
   },
   heroTitle: {
-    fontSize: 32,
+    fontSize: 42,
     fontWeight: '700',
     color: cngColors.textOnDark,
+    lineHeight: 50,
   },
   heroSubtitle: {
-    fontSize: 16,
+    fontSize: 18,
     color: cngColors.textMuted,
-    lineHeight: 24,
+    lineHeight: 26,
   },
   card: {
-    backgroundColor: cngColors.surfaceAlt,
+    backgroundColor: cngColors.surface,
     borderRadius: 28,
     padding: 24,
     gap: 16,
@@ -225,7 +238,7 @@ const styles = StyleSheet.create({
     elevation: 20,
   },
   kicker: {
-    color: cngColors.accent,
+    color: cngColors.accentSoft,
     fontSize: 13,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -284,6 +297,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 4,
+    marginTop: 8,
   },
   footerText: {
     color: cngColors.textMuted,
@@ -298,7 +312,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(248, 113, 113, 0.12)',
     padding: 8,
     borderRadius: 8,
+    fontSize: 13,
   },
 });
-
-

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
+  ImageBackground,
   Linking,
   PermissionsAndroid,
   Platform,
@@ -12,10 +13,18 @@ import {
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { pumpStations } from '../data/pumps';
-import { cngColors } from '../theme/cngTheme';
-import type { OperationsStackParamList } from '../navigation/OperationsNavigator';
+import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
+import { RatingStars } from '../components/RatingStars';
+import { InfoCard } from '../components/InfoCard';
 
-// Type definition for geolocation position
+type HomeStackParamList = {
+  Home: undefined;
+  PumpList: undefined;
+  PumpDetails: { pumpId: string };
+};
+
+type Props = NativeStackScreenProps<HomeStackParamList, 'PumpDetails'>;
+
 interface GeolocationPosition {
   coords: {
     latitude: number;
@@ -24,28 +33,32 @@ interface GeolocationPosition {
   };
 }
 
-// Declare navigator for React Native environment
 declare const navigator: any;
 
 const geolocation =
-  typeof navigator !== 'undefined' && navigator?.geolocation
-    ? navigator.geolocation
-    : undefined;
+  typeof navigator !== 'undefined' && navigator?.geolocation ? navigator.geolocation : undefined;
 
-type Props = NativeStackScreenProps<OperationsStackParamList, 'PumpDetails'>;
-
-const availabilityTheme = {
-  available: { badge: '#16a34a', text: 'Available', hint: 'Ready for refuel ops' },
-  busy: { badge: '#f97316', text: 'Busy', hint: 'Longer queue detected' },
-  offline: { badge: '#dc2626', text: 'Offline', hint: 'Maintenance window active' },
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
 };
 
-export function PumpDetailsScreen({ route }: Props) {
+export function PumpDetailsScreen({ route, navigation }: Props) {
   const pump = useMemo(
     () => pumpStations.find(current => current.id === route.params.pumpId),
     [route.params.pumpId],
   );
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [distance, setDistance] = useState<number | null>(null);
 
   React.useEffect(() => {
     const getCurrentLocation = () => {
@@ -55,10 +68,20 @@ export function PumpDetailsScreen({ route }: Props) {
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
               geolocation?.getCurrentPosition?.(
                 (position: GeolocationPosition) => {
-                  setUserLocation({
+                  const loc = {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
-                  });
+                  };
+                  setUserLocation(loc);
+                  if (pump) {
+                    const dist = calculateDistance(
+                      loc.latitude,
+                      loc.longitude,
+                      pump.coords.latitude,
+                      pump.coords.longitude,
+                    );
+                    setDistance(dist);
+                  }
                 },
                 () => {},
                 { enableHighAccuracy: true },
@@ -69,10 +92,20 @@ export function PumpDetailsScreen({ route }: Props) {
       } else {
         geolocation?.getCurrentPosition?.(
           (position: GeolocationPosition) => {
-            setUserLocation({
+            const loc = {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
-            });
+            };
+            setUserLocation(loc);
+            if (pump) {
+              const dist = calculateDistance(
+                loc.latitude,
+                loc.longitude,
+                pump.coords.latitude,
+                pump.coords.longitude,
+              );
+              setDistance(dist);
+            }
           },
           () => {},
           { enableHighAccuracy: true },
@@ -81,169 +114,238 @@ export function PumpDetailsScreen({ route }: Props) {
     };
 
     getCurrentLocation();
-  }, []);
+  }, [pump]);
 
   if (!pump) {
     return (
       <View style={styles.emptyState}>
         <Text style={styles.emptyTitle}>Pump not found</Text>
-        <Text style={styles.emptyBody}>Try selecting another marker from the map.</Text>
+        <Text style={styles.emptyBody}>Try selecting another pump.</Text>
       </View>
     );
   }
 
-  const theme = availabilityTheme[pump.availability];
+  const getAvailabilityColor = () => {
+    switch (pump.availability) {
+      case 'available':
+        return '#16a34a';
+      case 'busy':
+        return '#f97316';
+      case 'offline':
+        return '#dc2626';
+      default:
+        return cngColors.border;
+    }
+  };
+
+  const getAvailabilityText = () => {
+    switch (pump.availability) {
+      case 'available':
+        return 'Available';
+      case 'busy':
+        return 'Busy';
+      case 'offline':
+        return 'Offline';
+      default:
+        return 'Unknown';
+    }
+  };
 
   const handleGetDirections = () => {
     if (userLocation) {
-      // Open Google Maps with directions from user location to pump
       const url = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.latitude},${userLocation.longitude}&destination=${pump.coords.latitude},${pump.coords.longitude}&travelmode=driving`;
       Linking.openURL(url).catch(err => console.error('Failed to open directions:', err));
     } else {
-      // Fallback to just opening the location if user location is not available
       const url = `https://www.google.com/maps/search/?api=1&query=${pump.coords.latitude},${pump.coords.longitude}`;
       Linking.openURL(url).catch(err => console.error('Failed to open maps:', err));
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.headerCard}>
-        <Text style={styles.pumpName}>{pump.name}</Text>
-        <Text style={styles.pumpAddress}>{pump.address}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: theme.badge }]}>
-          <Text style={styles.statusText}>{theme.text}</Text>
+    <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
+      <View style={styles.backdrop} />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.backButtonText}>←</Text>
+          </Pressable>
+          <Text style={styles.headerTitle}>Reliance CNG</Text>
+          <View style={styles.placeholder} />
         </View>
-        <Text style={styles.statusHint}>{theme.hint}</Text>
-      </View>
 
-      <View style={styles.metricsRow}>
-        <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Pressure</Text>
-          <Text style={styles.metricValue}>{pump.pressure}</Text>
-        </View>
-        <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Queue</Text>
-          <Text style={styles.metricValue}>{pump.queueMinutes} min</Text>
-        </View>
-      </View>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          {/* Illustration Card */}
+          <View style={styles.illustrationCard}>
+            <View style={styles.offerTag}>
+              <Text style={styles.offerText}>Offer</Text>
+            </View>
+            {/* Placeholder for pump illustration - you can add an actual image here */}
+            <View style={styles.illustrationPlaceholder} />
+          </View>
 
-      <View style={styles.infoCard}>
-        <Text style={styles.infoLabel}>Last updated</Text>
-        <Text style={styles.infoValue}>{pump.lastUpdated}</Text>
-      </View>
+          {/* Pump Details Section */}
+          <Text style={styles.sectionTitle}>Pump Details</Text>
 
-      <View style={styles.infoCard}>
-        <Text style={styles.infoLabel}>Supported routes</Text>
-        <Text style={styles.infoValue}>{pump.trips.filter(t => t !== 'all').join(', ') || 'All'}</Text>
-      </View>
+          <View style={styles.detailsContainer}>
+            <InfoCard
+              label="Rating"
+              value={<RatingStars rating={4.6} />}
+            />
+            <InfoCard
+              label="Availability"
+              value={
+                <View style={[styles.availabilityBadge, { backgroundColor: getAvailabilityColor() }]}>
+                  <Text style={styles.availabilityText}>{getAvailabilityText()}</Text>
+                </View>
+              }
+            />
+            <InfoCard
+              label="Distance"
+              value={
+                <Text style={styles.distanceText}>
+                  {distance !== null
+                    ? distance < 1
+                      ? `${Math.round(distance * 1000)}m`
+                      : `${distance.toFixed(1)} km`
+                    : 'Calculating...'}
+                </Text>
+              }
+            />
+          </View>
 
-      <Pressable
-        accessibilityRole="button"
-        onPress={handleGetDirections}
-        style={styles.navigateButton}>
-        <Text style={styles.navigateButtonText}>
-          {userLocation ? 'Get Directions' : 'Open in Maps'}
-        </Text>
-      </Pressable>
-    </ScrollView>
+          <Pressable style={styles.googleMapsButton} onPress={handleGetDirections}>
+            <Text style={styles.googleMapsButtonText}>GOOGLE MAPS</Text>
+          </Pressable>
+        </ScrollView>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: cngColors.primaryDark,
-    padding: 24,
-    gap: 16,
-  },
-  headerCard: {
-    backgroundColor: cngColors.surface,
-    borderRadius: 20,
-    padding: 24,
-    gap: 8,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: cngColors.border,
-  },
-  pumpName: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: cngColors.textOnDark,
-  },
-  pumpAddress: {
-    fontSize: 14,
-    color: cngColors.textMuted,
-  },
-  statusBadge: {
-    alignSelf: 'flex-start',
-    borderRadius: 999,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginTop: 8,
-  },
-  statusText: {
-    color: '#fff',
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    fontSize: 12,
-  },
-  statusHint: {
-    fontSize: 13,
-    color: cngColors.textMuted,
-  },
-  metricsRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  metricCard: {
+  background: {
     flex: 1,
-    backgroundColor: cngColors.surfaceAlt,
-    borderRadius: 16,
-    padding: 18,
-    gap: 6,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: cngColors.border,
+    backgroundColor: cngColors.primaryDark,
   },
-  metricLabel: {
-    fontSize: 12,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    color: cngColors.textMuted,
+  backgroundImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
-  metricValue: {
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(2, 15, 9, 0.75)',
+  },
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 20,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: 24,
+    color: cngColors.textOnDark,
+    fontWeight: '600',
+  },
+  headerTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: cngColors.textOnDark,
   },
-  infoCard: {
-    backgroundColor: cngColors.surface,
-    borderRadius: 16,
-    padding: 18,
-    gap: 4,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: cngColors.border,
+  placeholder: {
+    width: 40,
   },
-  infoLabel: {
+  scrollContent: {
+    padding: 24,
+    paddingTop: 8,
+    gap: 24,
+  },
+  illustrationCard: {
+    backgroundColor: '#e0f2fe',
+    borderRadius: 24,
+    height: 240,
+    overflow: 'hidden',
+    position: 'relative',
+    marginBottom: 8,
+  },
+  offerTag: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    backgroundColor: '#fbbf24',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    zIndex: 1,
+  },
+  offerText: {
+    color: '#000',
+    fontWeight: '700',
     fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    color: cngColors.textMuted,
   },
-  infoValue: {
-    fontSize: 16,
-    color: cngColors.textOnDark,
-    fontWeight: '600',
-  },
-  navigateButton: {
-    backgroundColor: cngColors.accent,
-    paddingVertical: 14,
-    borderRadius: 999,
+  illustrationPlaceholder: {
+    flex: 1,
+    backgroundColor: '#bae6fd',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  navigateButtonText: {
-    fontSize: 16,
+  sectionTitle: {
+    fontSize: 20,
     fontWeight: '700',
-    color: cngColors.primaryDark,
+    color: '#374151',
+    marginBottom: 8,
+  },
+  detailsContainer: {
+    gap: 16,
+  },
+  availabilityBadge: {
+    alignSelf: 'flex-start',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  availabilityText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  distanceText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  googleMapsButton: {
+    backgroundColor: '#16a34a',
+    borderRadius: 16,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 8,
+    shadowColor: '#16a34a',
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  googleMapsButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+    letterSpacing: 1,
   },
   emptyState: {
     flex: 1,

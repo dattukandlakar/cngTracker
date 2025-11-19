@@ -15,7 +15,7 @@ export const cngColors = {
 };
 
 export const CNG_BACKGROUND_IMAGE: ImageSourcePropType = {
-  uri: 'https://images.pexels.com/photos/9799999/pexels-photo-9799999.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  uri: 'https://res.cloudinary.com/dz7ndjnsq/image/upload/v1763529404/yloeh2fc5yehoms6kfi0.png',
 };
 
 

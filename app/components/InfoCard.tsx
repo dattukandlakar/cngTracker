@@ -10,8 +10,10 @@ type InfoCardProps = Readonly<{
 export function InfoCard({ label, value }: InfoCardProps) {
   return (
     <View style={styles.card}>
-      <Text style={styles.label}>{label}</Text>
-      {typeof value === 'string' ? <Text style={styles.value}>{value}</Text> : value}
+      <View style={styles.row}>
+        <Text style={styles.label}>{label}</Text>
+        {typeof value === 'string' ? <Text style={styles.value}>{value}</Text> : value}
+      </View>
     </View>
   );
 }
@@ -21,9 +23,13 @@ const styles = StyleSheet.create({
     backgroundColor: cngColors.surfaceAlt,
     borderRadius: 16,
     padding: 18,
-    gap: 4,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: cngColors.border,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   label: {
     fontSize: 12,

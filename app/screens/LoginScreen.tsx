@@ -13,6 +13,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { loginUser } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
+import { GradientButton } from '../components/GradientButton';
 
 type AuthStackParamList = {
   Signup: undefined;
@@ -54,24 +55,19 @@ export function LoginScreen({ navigation }: Props) {
 
   return (
     <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
-      <View style={styles.backdrop} />
       <KeyboardAvoidingView
         style={styles.keyboard}
         behavior={Platform.select({ ios: 'padding', android: undefined })}>
         <View style={styles.container}>
           <View style={styles.content}>
             <View style={styles.hero}>
-              <Text style={styles.badge}>CNG Tracker</Text>
               <Text style={styles.heroTitle}>Welcome Back</Text>
               <Text style={styles.heroSubtitle}>
-                Log in to find the nearest CNG stations and check real-time availability
+                Sign in to continue to CNG Tracker
               </Text>
             </View>
 
             <View style={styles.card}>
-              <Text style={styles.kicker}>Welcome back</Text>
-              <Text style={styles.title}>Log in to your account</Text>
-              <Text style={styles.subtitle}>Enter your credentials to continue</Text>
 
               <View style={styles.formGroup}>
                 <Text style={styles.label}>Mobile Number</Text>
@@ -100,14 +96,11 @@ export function LoginScreen({ navigation }: Props) {
 
               {!!error && <Text style={styles.errorText}>{error}</Text>}
 
-              <Pressable
-                style={[styles.primaryButton, isLoading && styles.disabledButton]}
+              <GradientButton
+                title={isLoading ? 'Signing in...' : 'Sign in'}
                 onPress={handleSubmit}
-                disabled={isLoading}>
-                <Text style={styles.primaryButtonText}>
-                  {isLoading ? 'Signing in...' : 'Sign in'}
-                </Text>
-              </Pressable>
+                disabled={isLoading}
+              />
 
               <View style={styles.footer}>
                 <Text style={styles.footerText}>Don't have an account?</Text>
@@ -139,7 +132,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(2, 15, 9, 0.75)',
+    backgroundColor: 'rgba(13, 42, 86, 0.65)',
   },
   keyboard: {
     flex: 1,
@@ -153,8 +146,9 @@ const styles = StyleSheet.create({
     gap: 28,
   },
   hero: {
-    gap: 16,
+    gap: 12,
     maxWidth: 420,
+    marginBottom: 40,
   },
   badge: {
     alignSelf: 'flex-start',
@@ -167,31 +161,31 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 1,
     textTransform: 'uppercase',
-    backgroundColor: 'rgba(15, 157, 88, 0.25)',
+    backgroundColor: 'rgba(255, 255, 255, 0.14)',
   },
   heroTitle: {
-    fontSize: 42,
-    fontWeight: '700',
+    fontSize: 48,
+    fontWeight: '800',
     color: cngColors.textOnDark,
-    lineHeight: 50,
+    lineHeight: 56,
   },
   heroSubtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: cngColors.textMuted,
-    lineHeight: 26,
+    lineHeight: 24,
   },
   card: {
-    backgroundColor: cngColors.surface,
-    borderRadius: 28,
-    padding: 24,
-    gap: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    borderRadius: 24,
+    padding: 28,
+    gap: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 10,
     borderWidth: 1,
-    borderColor: cngColors.border,
-    shadowColor: '#000000',
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 20 },
-    elevation: 20,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
   },
   kicker: {
     color: cngColors.accentSoft,
@@ -214,19 +208,19 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   label: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    letterSpacing: 0.4,
-    color: cngColors.accentSoft,
+    letterSpacing: 0.3,
+    color: '#4F46E5',
   },
   input: {
-    borderWidth: 1,
-    borderColor: cngColors.border,
-    borderRadius: 16,
-    padding: 14,
+    borderWidth: 2,
+    borderColor: '#E0E7FF',
+    borderRadius: 12,
+    padding: 16,
     fontSize: 16,
-    color: cngColors.textOnDark,
-    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+    color: '#1F2937',
+    backgroundColor: '#F9FAFB',
   },
   primaryButton: {
     marginTop: 12,
@@ -234,7 +228,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',
-    shadowColor: '#16a34a',
+    shadowColor: '#30ce21a9',
     shadowOpacity: 0.45,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 10 },
@@ -256,11 +250,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   footerText: {
-    color: cngColors.textMuted,
+    color: '#6B7280',
+    fontSize: 15,
   },
   linkText: {
-    color: cngColors.accent,
+    color: '#2563EB',
     fontWeight: '600',
+    fontSize: 15,
   },
   errorText: {
     color: cngColors.error,

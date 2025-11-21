@@ -1,10 +1,20 @@
 import React from 'react';
-import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../store';
 import { logout } from '../store/authSlice';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
+import { GradientButton } from '../components/GradientButton';
 
-export function ProfileScreen() {
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+
+type ProfileStackParamList = {
+  Profile: undefined;
+  UpdateProfile: undefined;
+};
+
+type Props = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
+
+export function ProfileScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
 
@@ -14,26 +24,86 @@ export function ProfileScreen() {
 
   return (
     <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
-      <View style={styles.backdrop} />
       <View style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.badge}>Profile</Text>
-          <Text style={styles.title}>{user?.name ?? 'Guest User'}</Text>
-          <Text style={styles.subtitle}>{user?.email ?? 'demo@cngtracker.com'}</Text>
-
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Mobile</Text>
-            <Text style={styles.infoValue}>{user?.mobile ?? 'Not provided'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Vehicle</Text>
-            <Text style={styles.infoValue}>{user?.carNumber ?? 'Not provided'}</Text>
-          </View>
-
-          <Pressable style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Log out</Text>
-          </Pressable>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>My Profile</Text>
         </View>
+
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          {/* Profile Card */}
+          <View style={styles.profileCard}>
+            <View style={styles.profileCardContent}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>{user?.name?.[0]?.toUpperCase() || 'U'}</Text>
+              </View>
+              <View style={styles.profileInfo}>
+                <Text style={styles.profileName}>{user?.name || 'Guest User'}</Text>
+                <Text style={styles.profileId}>ID {user?.mobile || 'Not provided'}</Text>
+                <Text style={styles.profileMobile}>📞 {user?.mobile || 'Not provided'}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Account Details Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Account Details</Text>
+              <Pressable 
+                style={styles.editButton}
+                onPress={() => navigation.navigate('UpdateProfile')}
+              >
+                <Text style={styles.editButtonText}>Edit Profile</Text>
+              </Pressable>
+            </View>
+            <View style={styles.detailCard}>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>First Name</Text>
+                <Text style={styles.detailValue}>{user?.name?.split(' ')[0] || 'Not Set'}</Text>
+              </View>
+              <View style={styles.separator} />
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Last Name</Text>
+                <Text style={styles.detailValue}>{user?.name?.split(' ').slice(1).join(' ') || 'Not Set'}</Text>
+              </View>
+              <View style={styles.separator} />
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Mobile Number</Text>
+                <Text style={styles.detailValue}>{user?.mobile || 'Not provided'}</Text>
+              </View>
+              <View style={styles.separator} />
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Car Number</Text>
+                <Text style={styles.detailValue}>{user?.carNumber || 'Not provided'}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* App Settings Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>App Settings</Text>
+            <View style={styles.settingsCard}>
+              <Pressable style={styles.settingRow}>
+                <Text style={styles.settingText}>Change Car Number</Text>
+                <Text style={styles.arrow}>›</Text>
+              </Pressable>
+              <View style={styles.separator} />
+              <Pressable style={styles.settingRow}>
+                <Text style={styles.settingText}>App Permissions</Text>
+                <Text style={styles.arrow}>›</Text>
+              </Pressable>
+              <View style={styles.separator} />
+              <Pressable style={styles.settingRow}>
+                <Text style={styles.settingText}>Terms & Privacies</Text>
+                <Text style={styles.arrow}>›</Text>
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Logout Button */}
+          <View style={styles.logoutSection}>
+            <GradientButton title="Logout" onPress={handleLogout} variant="danger" />
+          </View>
+        </ScrollView>
       </View>
     </ImageBackground>
   );
@@ -49,80 +119,154 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: 'rgba(2, 15, 9, 0.75)',
-  },
   container: {
     flex: 1,
-    padding: 24,
-    justifyContent: 'center',
   },
-  card: {
-    backgroundColor: cngColors.surface,
-    borderRadius: 28,
+  header: {
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 16,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: cngColors.textOnDark,
+    textAlign: 'center',
+  },
+  scrollContent: {
     padding: 24,
-    gap: 16,
-    borderWidth: 1,
-    borderColor: cngColors.border,
+    paddingTop: 8,
+    gap: 20,
+  },
+  profileCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 16,
+    padding: 20,
     shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
     elevation: 12,
   },
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: cngColors.border,
-    color: cngColors.textOnDark,
-    fontWeight: '600',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    backgroundColor: 'rgba(155, 225, 93, 0.25)',
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: cngColors.textOnDark,
-  },
-  subtitle: {
-    color: cngColors.textMuted,
-  },
-  infoRow: {
+  profileCardContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: cngColors.border,
-    paddingVertical: 12,
+    alignItems: 'center',
+    gap: 16,
   },
-  infoLabel: {
-    color: cngColors.textMuted,
-    fontSize: 14,
+  profileSection: {
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 20,
   },
-  infoValue: {
-    color: cngColors.textOnDark,
-    fontWeight: '600',
-  },
-  logoutButton: {
-    marginTop: 16,
-    backgroundColor: '#ef4444',
-    paddingVertical: 14,
-    borderRadius: 16,
+  avatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#0EA5E9',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  logoutText: {
-    color: '#fff',
+  avatarText: {
+    fontSize: 32,
     fontWeight: '700',
-    fontSize: 16,
-    letterSpacing: 0.5,
+    color: '#FFFFFF',
+  },
+  profileInfo: {
+    flex: 1,
+    gap: 4,
+  },
+  profileName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  profileId: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  profileMobile: {
+    fontSize: 13,
+    color: '#6B7280',
+  },
+  editButton: {
+    backgroundColor: '#0EA5E9',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+  },
+  editButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  section: {
+    gap: 12,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: 4,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: cngColors.textOnDark,
+  },
+  detailCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 16,
+    padding: 0,
+    overflow: 'hidden',
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+  },
+  detailLabel: {
+    fontSize: 15,
+    color: '#6B7280',
+    fontWeight: '500',
+  },
+  detailValue: {
+    fontSize: 15,
+    color: '#1F2937',
+    fontWeight: '600',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginHorizontal: 20,
+  },
+  settingsCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 16,
+    padding: 0,
+    overflow: 'hidden',
+  },
+  settingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+  },
+  settingText: {
+    fontSize: 15,
+    color: '#1F2937',
+    fontWeight: '500',
+  },
+  arrow: {
+    fontSize: 24,
+    color: '#9CA3AF',
+    fontWeight: '300',
+  },
+  logoutSection: {
+    marginTop: 8,
+    marginBottom: 24,
   },
 });
 

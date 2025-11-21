@@ -14,6 +14,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { signupUser } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
+import { GradientButton } from '../components/GradientButton';
 
 type AuthStackParamList = {
   Signup: undefined;
@@ -58,27 +59,19 @@ export function SignupScreen({ navigation }: Props) {
 
   return (
     <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
-      <View style={styles.backdrop} />
       <KeyboardAvoidingView
         style={styles.keyboard}
         behavior={Platform.select({ ios: 'padding', android: undefined })}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled">
-          <View style={styles.container}>
+        <View style={styles.container}>
+          <View style={styles.content}>
             <View style={styles.hero}>
-              <Text style={styles.badge}>CNG Tracker</Text>
               <Text style={styles.heroTitle}>Create Account</Text>
               <Text style={styles.heroSubtitle}>
-                Join us to find the nearest CNG stations and track availability in real-time
+                Join CNG Tracker to find stations near you
               </Text>
             </View>
 
             <View style={styles.card}>
-              <Text style={styles.kicker}>Get Started</Text>
-              <Text style={styles.title}>Sign up for CNG Tracker</Text>
-              <Text style={styles.subtitle}>Fill in your details to create your account</Text>
 
               <View style={styles.formGroup}>
                 <Text style={styles.label}>Full Name *</Text>
@@ -144,14 +137,11 @@ export function SignupScreen({ navigation }: Props) {
 
               {!!error && <Text style={styles.errorText}>{error}</Text>}
 
-              <Pressable
-                style={[styles.primaryButton, isLoading && styles.disabledButton]}
+              <GradientButton
+                title={isLoading ? 'Creating Account...' : 'Create Account'}
                 onPress={handleSubmit}
-                disabled={isLoading}>
-                <Text style={styles.primaryButtonText}>
-                  {isLoading ? 'Creating Account...' : 'Create Account'}
-                </Text>
-              </Pressable>
+                disabled={isLoading}
+              />
 
               <View style={styles.footer}>
                 <Text style={styles.footerText}>Already have an account?</Text>
@@ -161,7 +151,7 @@ export function SignupScreen({ navigation }: Props) {
               </View>
             </View>
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </ImageBackground>
   );
@@ -183,22 +173,23 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(2, 15, 9, 0.75)',
+    backgroundColor: 'rgba(13, 42, 86, 0.65)',
   },
   keyboard: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
-    padding: 24,
-    justifyContent: 'center',
-  },
   container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 24,
+  },
+  content: {
     gap: 28,
   },
   hero: {
-    gap: 16,
+    gap: 12,
     maxWidth: 420,
+    marginBottom: 40,
   },
   badge: {
     alignSelf: 'flex-start',
@@ -214,28 +205,28 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(15, 157, 88, 0.25)',
   },
   heroTitle: {
-    fontSize: 42,
-    fontWeight: '700',
+    fontSize: 48,
+    fontWeight: '800',
     color: cngColors.textOnDark,
-    lineHeight: 50,
+    lineHeight: 56,
   },
   heroSubtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: cngColors.textMuted,
-    lineHeight: 26,
+    lineHeight: 24,
   },
   card: {
-    backgroundColor: cngColors.surface,
-    borderRadius: 28,
-    padding: 24,
-    gap: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    borderRadius: 24,
+    padding: 28,
+    gap: 18,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 10,
     borderWidth: 1,
-    borderColor: cngColors.border,
-    shadowColor: '#000000',
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 20 },
-    elevation: 20,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
   },
   kicker: {
     color: cngColors.accentSoft,
@@ -258,19 +249,19 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   label: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    letterSpacing: 0.4,
-    color: cngColors.accentSoft,
+    letterSpacing: 0.3,
+    color: '#4F46E5',
   },
   input: {
-    borderWidth: 1,
-    borderColor: cngColors.border,
-    borderRadius: 16,
-    padding: 14,
+    borderWidth: 2,
+    borderColor: '#E0E7FF',
+    borderRadius: 12,
+    padding: 16,
     fontSize: 16,
-    color: cngColors.textOnDark,
-    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+    color: '#1F2937',
+    backgroundColor: '#F9FAFB',
   },
   primaryButton: {
     marginTop: 12,
@@ -300,11 +291,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   footerText: {
-    color: cngColors.textMuted,
+    color: '#6B7280',
+    fontSize: 15,
   },
   linkText: {
-    color: cngColors.accent,
+    color: '#2563EB',
     fontWeight: '600',
+    fontSize: 15,
   },
   errorText: {
     color: cngColors.error,

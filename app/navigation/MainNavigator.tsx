@@ -1,12 +1,24 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import LinearGradient from 'react-native-linear-gradient';
 import { HomeNavigator } from './HomeNavigator';
-import { SearchScreen } from '../screens/SearchScreen';
-import { ProfileScreen } from '../screens/ProfileScreen';
+import { SearchNavigator } from './SearchNavigator';
+import { ProfileNavigator } from './ProfileNavigator';
 import { cngColors } from '../theme/cngTheme';
 
 const Tab = createBottomTabNavigator();
+
+function TabBarBackground() {
+  return (
+    <LinearGradient
+      colors={['#D5F981', '#A9F06E', '#75DE5F']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={StyleSheet.absoluteFill}
+    />
+  );
+}
 
 function TabIcon({ name }: Readonly<{ name: 'home' | 'search' | 'profile' }>) {
   const iconMap: Record<typeof name, string> = {
@@ -26,16 +38,25 @@ export function MainNavigator() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: cngColors.accent,
-        tabBarInactiveTintColor: cngColors.textMuted,
+        tabBarActiveTintColor: '#0F2C3E',
+        tabBarInactiveTintColor: 'rgba(15, 44, 62, 0.6)',
         tabBarStyle: {
-          backgroundColor: cngColors.primary,
-          borderTopColor: cngColors.border,
-          borderTopWidth: 1,
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
           paddingBottom: 8,
           paddingTop: 8,
           height: 60,
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          elevation: 10,
+          shadowColor: '#000',
+          shadowOpacity: 0.1,
+          shadowRadius: 10,
+          shadowOffset: { width: 0, height: -3 },
+          position: 'absolute',
+          overflow: 'hidden',
         },
+        tabBarBackground: () => <TabBarBackground />,
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '600',
@@ -51,15 +72,15 @@ export function MainNavigator() {
       />
       <Tab.Screen
         name="Search"
-        component={SearchScreen}
+        component={SearchNavigator}
         options={{
           tabBarLabel: 'Search',
           tabBarIcon: SearchTabIcon,
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="ProfileTab"
+        component={ProfileNavigator}
         options={{
           tabBarLabel: 'Profile',
           tabBarIcon: ProfileTabIcon,

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
-  ImageBackground,
+  Image,
   Linking,
   PermissionsAndroid,
   Platform,
@@ -11,9 +11,11 @@ import {
   View,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import LinearGradient from 'react-native-linear-gradient';
 
 import { pumpStations } from '../data/pumps';
-import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
+import { cngColors } from '../theme/cngTheme';
+import { GradientButton } from '../components/GradientButton';
 import { RatingStars } from '../components/RatingStars';
 import { InfoCard } from '../components/InfoCard';
 
@@ -162,8 +164,12 @@ export function PumpDetailsScreen({ route, navigation }: Props) {
   };
 
   return (
-    <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
-      <View style={styles.backdrop} />
+    <LinearGradient
+      colors={['#2B5876', '#1E3D59', '#17628A', '#4E9F8E']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.background}
+    >
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -179,8 +185,11 @@ export function PumpDetailsScreen({ route, navigation }: Props) {
             <View style={styles.offerTag}>
               <Text style={styles.offerText}>Offer</Text>
             </View>
-            {/* Placeholder for pump illustration - you can add an actual image here */}
-            <View style={styles.illustrationPlaceholder} />
+            <Image
+              source={require('../../asset/images/background.png')}
+              style={styles.illustrationImage}
+              resizeMode="cover"
+            />
           </View>
 
           {/* Pump Details Section */}
@@ -213,32 +222,16 @@ export function PumpDetailsScreen({ route, navigation }: Props) {
             />
           </View>
 
-          <Pressable style={styles.googleMapsButton} onPress={handleGetDirections}>
-            <Text style={styles.googleMapsButtonText}>GOOGLE MAPS</Text>
-          </Pressable>
+          <GradientButton title="GOOGLE MAPS" onPress={handleGetDirections} />
         </ScrollView>
       </View>
-    </ImageBackground>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: cngColors.primaryDark,
-  },
-  backgroundImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: 'rgba(2, 15, 9, 0.75)',
   },
   container: {
     flex: 1,
@@ -276,9 +269,9 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   illustrationCard: {
-    backgroundColor: '#e0f2fe',
-    borderRadius: 24,
-    height: 240,
+    backgroundColor: '#7DC8D8',
+    borderRadius: 20,
+    height: 200,
     overflow: 'hidden',
     position: 'relative',
     marginBottom: 8,
@@ -298,17 +291,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 12,
   },
-  illustrationPlaceholder: {
-    flex: 1,
-    backgroundColor: '#bae6fd',
-    justifyContent: 'center',
-    alignItems: 'center',
+  illustrationImage: {
+    width: '100%',
+    height: '100%',
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
-    color: '#374151',
-    marginBottom: 8,
+    color: cngColors.textOnDark,
+    marginBottom: 12,
   },
   detailsContainer: {
     gap: 16,

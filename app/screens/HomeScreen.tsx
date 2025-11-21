@@ -2,6 +2,7 @@ import React from 'react';
 import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
+import { GradientButton } from '../components/GradientButton';
 
 type HomeStackParamList = {
   Home: undefined;
@@ -18,20 +19,17 @@ export function HomeScreen({ navigation }: Props) {
 
   return (
     <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
-      <View style={styles.backdrop} />
       <View style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.hero}>
-            <Text style={styles.badge}>CNG Tracker</Text>
-            <Text style={styles.heroTitle}>Find Nearest Pump</Text>
-            <Text style={styles.heroSubtitle}>
-              Discover the closest CNG stations near you and check real-time availability
-            </Text>
+        <View style={styles.topSection}>
+          <View style={styles.brandRow}>
+            <Text style={styles.leafIcon}>🌿</Text>
+            <Text style={styles.brandTitle}>CNG Tracker</Text>
           </View>
+        </View>
 
-          <Pressable style={styles.primaryButton} onPress={handleFindNearestPump}>
-            <Text style={styles.primaryButtonText}>Find Nearest Pump</Text>
-          </Pressable>
+        <View style={styles.bottomSection}>
+          <GradientButton title="FIND NEAREST PUMP NOW" onPress={handleFindNearestPump} />
+          <Text style={styles.ctaSubtitle}>Start saving on every journey.</Text>
         </View>
       </View>
     </ImageBackground>
@@ -54,19 +52,19 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(2, 15, 9, 0.75)',
+    backgroundColor: 'rgba(13, 42, 86, 0.65)',
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: 24,
+    paddingBottom: 40,
   },
-  content: {
-    gap: 32,
+  topSection: {
+    paddingTop: 20,
   },
-  hero: {
-    gap: 16,
-    maxWidth: 420,
+  bottomSection: {
+    gap: 12,
   },
   badge: {
     alignSelf: 'flex-start',
@@ -108,6 +106,29 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 18,
     letterSpacing: 0.5,
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    alignSelf: 'flex-start',
+  },
+  leafIcon: {
+    fontSize: 28,
+    color: cngColors.primary,
+    marginTop: 2,
+  },
+  brandTitle: {
+    fontSize: 44,
+    fontWeight: '800',
+    color: cngColors.textOnDark,
+    letterSpacing: 0.5,
+  },
+  ctaSubtitle: {
+    marginTop: 12,
+    color: cngColors.textMuted,
+    fontSize: 15,
+    alignSelf: 'center',
   },
 });
 

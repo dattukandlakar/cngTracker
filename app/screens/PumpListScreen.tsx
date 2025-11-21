@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   FlatList,
-  ImageBackground,
+  Image,
   PermissionsAndroid,
   Platform,
   Pressable,
@@ -10,9 +10,11 @@ import {
   View,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import LinearGradient from 'react-native-linear-gradient';
+import Geolocation from '@react-native-community/geolocation';
 import { pumpStations, type PumpStation } from '../data/pumps';
 import { PumpCard } from '../components/PumpCard';
-import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
+import { cngColors } from '../theme/cngTheme';
 
 type HomeStackParamList = {
   Home: undefined;
@@ -22,23 +24,10 @@ type HomeStackParamList = {
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'PumpList'>;
 
-interface GeolocationPosition {
-  coords: {
-    latitude: number;
-    longitude: number;
-    accuracy: number;
-  };
-}
-
 // Add type for pump with distance
 type PumpWithDistance = PumpStation & {
   distance?: number;
 };
-
-declare const navigator: any;
-
-const geolocation =
-  typeof navigator !== 'undefined' && navigator?.geolocation ? navigator.geolocation : undefined;
 
 // Calculate distance between two coordinates (Haversine formula)
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -60,15 +49,17 @@ export function PumpListScreen({ navigation }: Props) {
 
   React.useEffect(() => {
     const requestLocation = () => {
-      geolocation?.getCurrentPosition?.(
-        (position: GeolocationPosition) => {
+      Geolocation.getCurrentPosition(
+        (position) => {
           setUserLocation({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           });
         },
-        () => {},
-        { enableHighAccuracy: true },
+        (error) => {
+          console.log('Error getting location:', error);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
       );
     };
 
@@ -108,15 +99,27 @@ export function PumpListScreen({ navigation }: Props) {
   };
 
   return (
-    <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
-      <View style={styles.backdrop} />
+    <LinearGradient
+      colors={['#4A90E2', '#357ABD', '#2E5F8D', '#1E3A5F']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.background}
+    >
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
             <Text style={styles.backButtonText}>←</Text>
           </Pressable>
-          <Text style={styles.headerTitle}>Find Nearest Pump</Text>
+          <Text style={styles.headerTitle}>Nearwdy Stations</Text>
           <View style={styles.placeholder} />
+        </View>
+
+        <View style={styles.mapContainer}>
+          <Image
+            source={require('../../asset/images/map.png')}
+            style={styles.mapImage}
+            resizeMode="cover"
+          />
         </View>
 
         <FlatList<PumpWithDistance>
@@ -129,27 +132,13 @@ export function PumpListScreen({ navigation }: Props) {
           showsVerticalScrollIndicator={false}
         />
       </View>
-    </ImageBackground>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: cngColors.primaryDark,
-  },
-  backgroundImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: 'rgba(2, 15, 9, 0.75)',
   },
   container: {
     flex: 1,
@@ -180,6 +169,18 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     width: 40,
+  },
+  mapContainer: {
+    height: 200,
+    marginHorizontal: 24,
+    marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: '#E8F4F8',
+  },
+  mapImage: {
+    width: '100%',
+    height: '100%',
   },
   listContent: {
     padding: 24,

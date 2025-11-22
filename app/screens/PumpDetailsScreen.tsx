@@ -23,6 +23,7 @@ type HomeStackParamList = {
   Home: undefined;
   PumpList: undefined;
   PumpDetails: { pumpId: string };
+  AddPump: undefined;
 };
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'PumpDetails'>;

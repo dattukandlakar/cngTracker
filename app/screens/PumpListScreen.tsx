@@ -15,11 +15,14 @@ import Geolocation from '@react-native-community/geolocation';
 import { pumpStations, type PumpStation } from '../data/pumps';
 import { PumpCard } from '../components/PumpCard';
 import { cngColors } from '../theme/cngTheme';
+import { useAppSelector } from '../store';
+import { isManager } from '../utils/roleUtils';
 
 type HomeStackParamList = {
   Home: undefined;
   PumpList: undefined;
   PumpDetails: { pumpId: string };
+  AddPump: undefined;
 };
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'PumpList'>;
@@ -45,6 +48,8 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 };
 
 export function PumpListScreen({ navigation }: Props) {
+  const user = useAppSelector(state => state.auth.user);
+  const showManagerDashboard = isManager(user);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   React.useEffect(() => {
@@ -110,8 +115,18 @@ export function PumpListScreen({ navigation }: Props) {
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
             <Text style={styles.backButtonText}>←</Text>
           </Pressable>
-          <Text style={styles.headerTitle}>Nearwdy Stations</Text>
-          <View style={styles.placeholder} />
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>Nearby Stations</Text>
+            <Text style={styles.headerSubtitle}>Find the closest CNG stations</Text>
+          </View>
+          {showManagerDashboard && (
+            <Pressable 
+              style={styles.managerButton}
+              onPress={() => navigation.navigate('AddPump')}
+            >
+              <Text style={styles.managerButtonText}>+</Text>
+            </Pressable>
+          )}
         </View>
 
         {/* <View style={styles.mapContainer}>
@@ -150,6 +165,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 20,
+  },
+  headerContent: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: cngColors.textMuted,
+    marginTop: 4,
+  },
+  managerButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+  },
+  managerButtonText: {
+    fontSize: 20,
+    color: cngColors.textOnDark,
   },
   backButton: {
     width: 40,

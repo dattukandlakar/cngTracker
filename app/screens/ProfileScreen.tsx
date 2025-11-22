@@ -5,10 +5,12 @@ import { logout } from '../store/authSlice';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
 import { GradientButton } from '../components/GradientButton';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { isManager } from '../utils/roleUtils';
 
 type ProfileStackParamList = {
   Profile: undefined;
   UpdateProfile: undefined;
+  AddPump: undefined;
 };
 
 type Props = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
@@ -16,6 +18,7 @@ type Props = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 export function ProfileScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
+  const showManagerDashboard = isManager(user);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -83,6 +86,16 @@ export function ProfileScreen({ navigation }: Props) {
             </View>
           </View>
 
+          {showManagerDashboard && (
+            <View style={styles.managerSection}>
+              <GradientButton 
+                title="Add Pump" 
+                onPress={() => navigation.navigate('AddPump')} 
+                variant="primary" 
+              />
+            </View>
+          )}
+          
           <View style={styles.logoutSection}>
             <GradientButton title="Logout" onPress={handleLogout} variant="danger" />
           </View>
@@ -241,6 +254,9 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E5E7EB',
     marginHorizontal: 20,
+  },
+  managerSection: {
+    marginBottom: 12,
   },
   logoutSection: {
     marginBottom: 0,

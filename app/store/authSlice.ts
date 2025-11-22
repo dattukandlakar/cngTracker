@@ -52,7 +52,7 @@ export const loginUser = createAsyncThunk<AuthUser, LoginCredentials>(
       id: 'user-001',
       name: mobile, // Temporary: will be replaced with actual user data from API
       mobile,
-      role: 'user', // Default role, will be set by backend
+      role: 'manager', // Default role, will be set by backend
       deviceId,
     };
   },
@@ -74,7 +74,7 @@ export const signupUser = createAsyncThunk<AuthUser, SignupPayload>(
       id: 'user-002',
       name,
       mobile,
-      role: 'user', // Default role for new users, can be changed by admin later
+      role: 'manager', // Default role for testing, can be changed by admin later
       deviceId,
     };
   },

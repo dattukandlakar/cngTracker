@@ -5,6 +5,7 @@ import { PumpListScreen } from '../screens/PumpListScreen';
 import { PumpDetailsScreen } from '../screens/PumpDetailsScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { UpdateProfileScreen } from '../screens/UpdateProfileScreen';
+import { AddPumpScreen } from '../screens/AddPumpScreen';
 
 export type HomeStackParamList = {
   Home: undefined;
@@ -12,6 +13,7 @@ export type HomeStackParamList = {
   PumpDetails: { pumpId: string };
   Profile: undefined;
   UpdateProfile: undefined;
+  AddPump: undefined;
 };
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
@@ -27,6 +29,7 @@ export function HomeNavigator() {
       <Stack.Screen name="PumpDetails" component={PumpDetailsScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="UpdateProfile" component={UpdateProfileScreen} />
+      <Stack.Screen name="AddPump" component={AddPumpScreen} />
     </Stack.Navigator>
   );
 }

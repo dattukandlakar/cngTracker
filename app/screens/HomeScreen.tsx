@@ -3,6 +3,8 @@ import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
 import { GradientButton } from '../components/GradientButton';
+import { useAppSelector } from '../store';
+import { isManager } from '../utils/roleUtils';
 
 type HomeStackParamList = {
   Home: undefined;
@@ -10,17 +12,25 @@ type HomeStackParamList = {
   PumpDetails: { pumpId: string };
   Profile: undefined;
   UpdateProfile: undefined;
+  AddPump: undefined;
 };
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
 
 export function HomeScreen({ navigation }: Props) {
+  const user = useAppSelector(state => state.auth.user);
+  const showManagerDashboard = isManager(user);
+  
   const handleFindNearestPump = () => {
     navigation.navigate('PumpList');
   };
 
   const handleNavigateToProfile = () => {
     navigation.navigate('Profile');
+  };
+
+  const handleNavigateToAddPump = () => {
+    navigation.navigate('AddPump');
   };
 
   return (
@@ -44,6 +54,12 @@ export function HomeScreen({ navigation }: Props) {
         <View style={styles.bottomSection}>
           <GradientButton title="FIND NEAREST PUMP NOW" onPress={handleFindNearestPump} />
           <Text style={styles.ctaSubtitle}>Start saving on every journey.</Text>
+          
+          {/* {showManagerDashboard && (
+            <Pressable style={styles.managerButton} onPress={handleNavigateToAddPump}>
+              <Text style={styles.managerButtonText}>Add Pump</Text>
+            </Pressable>
+          )} */}
         </View>
       </View>
     </ImageBackground>
@@ -108,5 +124,18 @@ const styles = StyleSheet.create({
     color: cngColors.textMuted,
     fontSize: 15,
     alignSelf: 'center',
+  },
+  managerButton: {
+    marginTop: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 28,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  managerButtonText: {
+    color: cngColors.textOnDark,
+    fontWeight: '600',
+    fontSize: 16,
   },
 });

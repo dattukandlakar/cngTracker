@@ -223,7 +223,9 @@ export function PumpDetailsScreen({ route, navigation }: Props) {
             />
           </View>
 
-          <GradientButton title="GOOGLE MAPS" onPress={handleGetDirections} />
+          <View style={styles.buttonContainer}>
+            <GradientButton title="GOOGLE MAPS" onPress={handleGetDirections} />
+          </View>
         </ScrollView>
       </View>
     </LinearGradient>
@@ -265,9 +267,9 @@ const styles = StyleSheet.create({
     width: 40,
   },
   scrollContent: {
-    padding: 24,
-    paddingTop: 8,
-    gap: 24,
+    padding: 32,
+    paddingTop: 16,
+    gap: 40,
   },
   illustrationCard: {
     backgroundColor: '#7DC8D8',
@@ -303,7 +305,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   detailsContainer: {
-    gap: 16,
+    gap: 28,
+    marginBottom: 24,
   },
   availabilityBadge: {
     alignSelf: 'flex-start',
@@ -338,6 +341,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
     letterSpacing: 1,
+  },
+  buttonContainer: {
+    marginTop: 24,
+    marginBottom: 32,
   },
   emptyState: {
     flex: 1,

@@ -15,6 +15,18 @@ export function isManager(user?: AuthUser): boolean {
 }
 
 /**
+ * Check if user has operator permissions
+ * @param user - The authenticated user
+ * @returns boolean - true if user has operator role
+ */
+export function isOperator(user?: AuthUser): boolean {
+  if (!user) return false;
+  
+  // Only operators can access the operator dashboard
+  return user.role === 'operator';
+}
+
+/**
  * Check if user has specific permission
  * @param user - The authenticated user
  * @param permission - The permission to check

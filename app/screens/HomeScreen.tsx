@@ -4,7 +4,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
 import { GradientButton } from '../components/GradientButton';
 import { useAppSelector } from '../store';
-import { isManager } from '../utils/roleUtils';
+import { isManager, isOperator } from '../utils/roleUtils';
 
 type HomeStackParamList = {
   Home: undefined;
@@ -13,6 +13,7 @@ type HomeStackParamList = {
   Profile: undefined;
   UpdateProfile: undefined;
   AddPump: undefined;
+  OperatorPumpStatus: undefined;
 };
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
@@ -31,6 +32,10 @@ export function HomeScreen({ navigation }: Props) {
 
   const handleNavigateToAddPump = () => {
     navigation.navigate('AddPump');
+  };
+
+  const handleNavigateToOperatorStatus = () => {
+    navigation.navigate('OperatorPumpStatus');
   };
 
   return (
@@ -52,14 +57,25 @@ export function HomeScreen({ navigation }: Props) {
         </View>
 
         <View style={styles.bottomSection}>
-          <GradientButton title="FIND NEAREST PUMP NOW" onPress={handleFindNearestPump} />
-          <Text style={styles.ctaSubtitle}>Start saving on every journey.</Text>
+          {!isOperator(user) && (
+            <>
+              <GradientButton title="FIND NEAREST PUMP NOW" onPress={handleFindNearestPump} />
+              <Text style={styles.ctaSubtitle}>Start saving on every journey.</Text>
+            </>
+          )}
           
-          {/* {showManagerDashboard && (
+          {showManagerDashboard && (
             <Pressable style={styles.managerButton} onPress={handleNavigateToAddPump}>
               <Text style={styles.managerButtonText}>Add Pump</Text>
             </Pressable>
-          )} */}
+          )}
+          
+          {isOperator(user) && (
+            <>
+              <GradientButton title="UPDATE PUMP STATUS" onPress={handleNavigateToOperatorStatus} />
+              <Text style={styles.ctaSubtitle}>Manage pump availability and stock.</Text>
+            </>
+          )}
         </View>
       </View>
     </ImageBackground>

@@ -74,7 +74,7 @@ export const signupUser = createAsyncThunk<AuthUser, SignupPayload>(
       id: 'user-002',
       name,
       mobile,
-      role: 'manager', // Default role for testing, can be changed by admin later
+      role: 'operator', // Default role for testing, can be changed by admin later
       deviceId,
     };
   },

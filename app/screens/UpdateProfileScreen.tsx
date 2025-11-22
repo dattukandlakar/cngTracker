@@ -189,7 +189,7 @@ export function UpdateProfileScreen({ navigation }: Props) {
               />
             </View>
 
-            <View style={styles.formGroup}>
+            {/* <View style={styles.formGroup}>
               <Text style={styles.label}>Email Address</Text>
               <TextInput
                 value={email}
@@ -200,7 +200,7 @@ export function UpdateProfileScreen({ navigation }: Props) {
                 autoCapitalize="none"
                 style={styles.input}
               />
-            </View>
+            </View> */}
 
             <View style={styles.formGroup}>
               <Text style={styles.label}>Mobile Number</Text>
@@ -217,7 +217,7 @@ export function UpdateProfileScreen({ navigation }: Props) {
               <Text style={styles.helperText}>Mobile number cannot be changed</Text>
             </View>
 
-            <View style={styles.formGroup}>
+            {/* <View style={styles.formGroup}>
               <Text style={styles.label}>Car Number</Text>
               <TextInput
                 value={carNumber}
@@ -227,7 +227,7 @@ export function UpdateProfileScreen({ navigation }: Props) {
                 autoCapitalize="characters"
                 style={styles.input}
               />
-            </View>
+            </View> */}
           </View>
 
           <View style={styles.buttonContainer}>

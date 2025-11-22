@@ -20,9 +20,6 @@ type LoginCredentials = {
 type SignupPayload = {
   name: string;
   mobile: string;
-  carNumber: string;
-  password: string;
-  email?: string;
 };
 
 type AuthState = {
@@ -63,7 +60,7 @@ export const loginUser = createAsyncThunk<AuthUser, LoginCredentials>(
 
 export const signupUser = createAsyncThunk<AuthUser, SignupPayload>(
   'auth/signupUser',
-  async ({ name, mobile, carNumber, password, email }) => {
+  async ({ name, mobile}) => {
     // Get or generate device ID automatically
     const deviceId = await getDeviceId();
     
@@ -77,8 +74,6 @@ export const signupUser = createAsyncThunk<AuthUser, SignupPayload>(
       id: 'user-002',
       name,
       mobile,
-      carNumber,
-      email,
       role: 'user', // Default role for new users, can be changed by admin later
       deviceId,
     };

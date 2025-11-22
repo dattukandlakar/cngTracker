@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { logout } from '../store/authSlice';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
 import { GradientButton } from '../components/GradientButton';
-
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type ProfileStackParamList = {
@@ -25,12 +24,18 @@ export function ProfileScreen({ navigation }: Props) {
   return (
     <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
       <View style={styles.container}>
+
         <View style={styles.header}>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.backButtonText}>←</Text>
+          </Pressable>
+
           <Text style={styles.headerTitle}>My Profile</Text>
+
+          <View style={styles.headerRightPlaceholder} />
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          {/* Profile Card */}
           <View style={styles.profileCard}>
             <View style={styles.profileCardContent}>
               <View style={styles.avatar}>
@@ -44,7 +49,6 @@ export function ProfileScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Account Details Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Account Details</Text>
@@ -55,6 +59,7 @@ export function ProfileScreen({ navigation }: Props) {
                 <Text style={styles.editButtonText}>Edit Profile</Text>
               </Pressable>
             </View>
+
             <View style={styles.detailCard}>
               <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>First Name</Text>
@@ -72,34 +77,12 @@ export function ProfileScreen({ navigation }: Props) {
               </View>
               <View style={styles.separator} />
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Car Number</Text>
+                <Text style={styles.detailLabel}>User code</Text>
                 <Text style={styles.detailValue}>{user?.carNumber || 'Not provided'}</Text>
               </View>
             </View>
           </View>
 
-          {/* App Settings Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>App Settings</Text>
-            <View style={styles.settingsCard}>
-              <Pressable style={styles.settingRow}>
-                <Text style={styles.settingText}>Change Car Number</Text>
-                <Text style={styles.arrow}>›</Text>
-              </Pressable>
-              <View style={styles.separator} />
-              <Pressable style={styles.settingRow}>
-                <Text style={styles.settingText}>App Permissions</Text>
-                <Text style={styles.arrow}>›</Text>
-              </Pressable>
-              <View style={styles.separator} />
-              <Pressable style={styles.settingRow}>
-                <Text style={styles.settingText}>Terms & Privacies</Text>
-                <Text style={styles.arrow}>›</Text>
-              </Pressable>
-            </View>
-          </View>
-
-          {/* Logout Button */}
           <View style={styles.logoutSection}>
             <GradientButton title="Logout" onPress={handleLogout} variant="danger" />
           </View>
@@ -126,12 +109,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    
+  },
+  headerRightPlaceholder: {
+    width: 40,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
     color: cngColors.textOnDark,
     textAlign: 'center',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: 24,
+    color: cngColors.textOnDark,
+    fontWeight: '600',
   },
   scrollContent: {
     padding: 24,
@@ -241,33 +242,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E7EB',
     marginHorizontal: 20,
   },
-  settingsCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 16,
-    padding: 0,
-    overflow: 'hidden',
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
-  settingText: {
-    fontSize: 15,
-    color: '#1F2937',
-    fontWeight: '500',
-  },
-  arrow: {
-    fontSize: 24,
-    color: '#9CA3AF',
-    fontWeight: '300',
-  },
   logoutSection: {
-    marginTop: 8,
-    marginBottom: 24,
+    marginBottom: 0,
   },
 });
-
 

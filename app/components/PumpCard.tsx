@@ -1,7 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import type { PumpStation } from '../data/pumps';
-import { cngColors } from '../theme/cngTheme';
+import { PumpStation } from '../data/pumps';
 
 type PumpCardProps = Readonly<{
   pump: PumpStation;
@@ -10,68 +9,50 @@ type PumpCardProps = Readonly<{
 }>;
 
 export function PumpCard({ pump, onPress, distance }: PumpCardProps) {
-  const getAvailabilityColor = (availability: string) => {
-    switch (availability) {
+  const getBadge = () => {
+    switch (pump.availability) {
       case 'available':
-        return '#16a34a';
+        return { label: 'IN STOCK', color: '#16A34A' };
       case 'busy':
-        return '#f97316';
+        return { label: 'LOW STOCK', color: '#F97316' };
       case 'offline':
-        return '#dc2626';
+        return { label: 'OUT OF SERVICE', color: '#DC2626' };
       default:
-        return cngColors.border;
+        return { label: 'UNKNOWN', color: '#6B7280' };
     }
   };
 
-  const getAvailabilityLabel = (availability: string) => {
-    switch (availability) {
-      case 'available':
-        return 'Available';
-      case 'busy':
-        return 'Busy';
-      case 'offline':
-        return 'Offline';
-      default:
-        return 'Unknown';
-    }
-  };
+  const badge = getBadge();
 
   return (
     <Pressable
       onPress={() => onPress(pump.id)}
-      style={styles.card}
-      android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
-      <View style={styles.cardContent}>
-        <View style={styles.cardHeader}>
-          <View style={styles.cardInfo}>
-            <Text style={styles.pumpName}>{pump.name}</Text>
-            <Text style={styles.pumpAddress}>{pump.address}</Text>
-            {distance !== undefined && (
-              <Text style={styles.pumpDistance}>
-                {distance < 1 ? `${Math.round(distance * 1000)}m away` : `${distance.toFixed(1)}km away`}
-              </Text>
-            )}
-          </View>
-          <View
-            style={[
-              styles.availabilityBadge,
-              { backgroundColor: getAvailabilityColor(pump.availability) },
-            ]}>
-            <Text style={styles.availabilityBadgeText}>{getAvailabilityLabel(pump.availability)}</Text>
-          </View>
+      style={({ pressed }) => [
+        styles.card,
+        pressed && { opacity: 0.9 }
+      ]}
+    >
+      <View style={styles.headerRow}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.pumpName}>{pump.name}</Text>
         </View>
-        {pump.availability !== 'offline' && (
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Pressure</Text>
-              <Text style={styles.statValue}>{pump.pressure}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Queue</Text>
-              <Text style={styles.statValue}>{pump.queueMinutes}m</Text>
-            </View>
-          </View>
+
+        <View style={[styles.badge, { backgroundColor: badge.color }]}>
+          <Text style={styles.badgeText}>{badge.label}</Text>
+        </View>
+      </View>
+
+      {/* Footer row with distance + last updated in one horizontal line */}
+      <View style={styles.footerRow}>
+        {distance !== undefined && (
+          <Text style={styles.distance}>
+            {distance < 1
+              ? `${Math.round(distance * 1000)}m away`
+              : `${distance.toFixed(1)}km away`}
+          </Text>
         )}
+
+        <Text style={styles.updatedText}>Updated {pump.lastUpdated}</Text>
       </View>
     </Pressable>
   );
@@ -79,77 +60,51 @@ export function PumpCard({ pump, onPress, distance }: PumpCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: cngColors.surfaceAlt,
-    borderRadius: 20,
-    marginBottom: 16,
-    overflow: 'hidden',
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: cngColors.border,
-  },
-  cardContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
     padding: 18,
-    gap: 12,
+    marginBottom: 16,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+
+    elevation: 4,
   },
-  cardHeader: {
+  headerRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'flex-start',
-    gap: 12,
-  },
-  cardInfo: {
-    flex: 1,
+    marginBottom: 8,
   },
   pumpName: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
-    color: cngColors.textOnDark,
-    marginBottom: 4,
+    color: '#1F2937',
   },
-  pumpAddress: {
-    color: cngColors.textMuted,
+  distance: {
     fontSize: 13,
-    marginBottom: 4,
+     color: '#080605',
   },
-  pumpDistance: {
-    color: cngColors.accent,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  availabilityBadge: {
-    borderRadius: 999,
-    paddingHorizontal: 12,
+  badge: {
+    paddingHorizontal: 10,
     paddingVertical: 6,
+    borderRadius: 8,
   },
-  availabilityBadgeText: {
-    color: '#fff',
-    fontWeight: '700',
+  badgeText: {
+    color: 'white',
     fontSize: 11,
-    textTransform: 'uppercase',
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 4,
-  },
-  statItem: {
-    flex: 1,
-    backgroundColor: cngColors.surface,
-    borderRadius: 14,
-    padding: 12,
-    gap: 4,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: cngColors.border,
-  },
-  statLabel: {
-    fontSize: 12,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    color: cngColors.textMuted,
-  },
-  statValue: {
-    fontSize: 16,
     fontWeight: '700',
-    color: cngColors.textOnDark,
+    textTransform: 'uppercase',
+  },
+  footerRow: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    color:'black'
+  },
+  updatedText: {
+    fontSize: 12,
+    color: '#080605',
   },
 });
-

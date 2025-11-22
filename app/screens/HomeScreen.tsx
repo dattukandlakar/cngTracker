@@ -8,6 +8,8 @@ type HomeStackParamList = {
   Home: undefined;
   PumpList: undefined;
   PumpDetails: { pumpId: string };
+  Profile: undefined;
+  UpdateProfile: undefined;
 };
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
@@ -17,14 +19,26 @@ export function HomeScreen({ navigation }: Props) {
     navigation.navigate('PumpList');
   };
 
+  const handleNavigateToProfile = () => {
+    navigation.navigate('Profile');
+  };
+
   return (
-    <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
+    <ImageBackground
+      source={CNG_BACKGROUND_IMAGE}
+      style={styles.background}
+      imageStyle={styles.backgroundImage}
+      resizeMode="cover"
+    >
       <View style={styles.container}>
-        <View style={styles.topSection}>
+        <View style={styles.header}>
           <View style={styles.brandRow}>
             <Text style={styles.leafIcon}>🌿</Text>
             <Text style={styles.brandTitle}>CNG Tracker</Text>
           </View>
+          <Pressable style={styles.profileButton} onPress={handleNavigateToProfile}>
+            <Text style={styles.profileButtonText}>👤</Text>
+          </Pressable>
         </View>
 
         <View style={styles.bottomSection}>
@@ -44,15 +58,6 @@ const styles = StyleSheet.create({
   backgroundImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
-  },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: 'rgba(13, 42, 86, 0.65)',
   },
   container: {
     flex: 1,
@@ -60,58 +65,20 @@ const styles = StyleSheet.create({
     padding: 24,
     paddingBottom: 40,
   },
-  topSection: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingTop: 20,
   },
   bottomSection: {
     gap: 12,
-  },
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: cngColors.border,
-    color: cngColors.textOnDark,
-    fontWeight: '600',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    backgroundColor: 'rgba(15, 157, 88, 0.25)',
-  },
-  heroTitle: {
-    fontSize: 42,
-    fontWeight: '700',
-    color: cngColors.textOnDark,
-    lineHeight: 50,
-  },
-  heroSubtitle: {
-    fontSize: 18,
-    color: cngColors.textMuted,
-    lineHeight: 26,
-  },
-  primaryButton: {
-    backgroundColor: cngColors.primary,
-    borderRadius: 20,
-    paddingVertical: 18,
     alignItems: 'center',
-    shadowColor: '#16a34a',
-    shadowOpacity: 0.45,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 10,
-  },
-  primaryButtonText: {
-    color: '#032917',
-    fontWeight: '700',
-    fontSize: 18,
-    letterSpacing: 0.5,
   },
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    alignSelf: 'flex-start',
   },
   leafIcon: {
     fontSize: 28,
@@ -119,10 +86,22 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   brandTitle: {
-    fontSize: 44,
-    fontWeight: '800',
+    fontSize: 24,
+    fontWeight: '700',
     color: cngColors.textOnDark,
     letterSpacing: 0.5,
+  },
+  profileButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileButtonText: {
+    fontSize: 20,
+    color: cngColors.textOnDark,
   },
   ctaSubtitle: {
     marginTop: 12,
@@ -131,4 +110,3 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 });
-

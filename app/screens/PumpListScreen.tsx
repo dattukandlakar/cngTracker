@@ -78,7 +78,7 @@ export function PumpListScreen({ navigation }: Props) {
 
   const pumpsWithDistance = useMemo<PumpWithDistance[]>(() => {
     if (!userLocation) {
-      return pumpStations.map(pump => ({ ...pump, distance: undefined }));
+      return pumpStations.map(pump => ({ ...pump }));
     }
 
     return pumpStations
@@ -114,13 +114,13 @@ export function PumpListScreen({ navigation }: Props) {
           <View style={styles.placeholder} />
         </View>
 
-        <View style={styles.mapContainer}>
+        {/* <View style={styles.mapContainer}>
           <Image
             source={require('../../asset/images/map.png')}
             style={styles.mapImage}
             resizeMode="cover"
           />
-        </View>
+        </View> */}
 
         <FlatList<PumpWithDistance>
           data={pumpsWithDistance}

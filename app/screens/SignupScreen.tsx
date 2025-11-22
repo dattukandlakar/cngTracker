@@ -32,27 +32,19 @@ export function SignupScreen({ navigation }: Props) {
 
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
-  const [carNumber, setCarNumber] = useState('');
   const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
 
   const isLoading = status === 'loading';
 
   const handleSubmit = async () => {
-    if (isLoading) {
-      return;
-    }
-
-    if (!name.trim() || !mobile.trim() || !carNumber.trim() || !password.trim()) {
-      return;
-    }
+    if (isLoading) return;
+    if (!name.trim() || !mobile.trim() ) return;
 
     const result = await dispatch(
-      signupUser({ name, mobile, carNumber, password, email: email.trim() || undefined }),
+      signupUser({ name, mobile})
     );
 
     if (signupUser.fulfilled.match(result)) {
-      // Navigate to Login after successful signup
       navigation.replace('Login');
     }
   };
@@ -61,14 +53,14 @@ export function SignupScreen({ navigation }: Props) {
     <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
       <KeyboardAvoidingView
         style={styles.keyboard}
-        behavior={Platform.select({ ios: 'padding', android: undefined })}>
-        <View style={styles.container}>
-          <View style={styles.content}>
+        behavior={Platform.select({ ios: 'padding', android: undefined })}
+      >
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={styles.container}>
+
             <View style={styles.hero}>
               <Text style={styles.heroTitle}>Create Account</Text>
-              <Text style={styles.heroSubtitle}>
-                Join CNG Tracker to find stations near you
-              </Text>
+              <Text style={styles.heroSubtitle}>Join CNG Tracker to find stations near you</Text>
             </View>
 
             <View style={styles.card}>
@@ -98,19 +90,7 @@ export function SignupScreen({ navigation }: Props) {
                 />
               </View>
 
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Car Number *</Text>
-                <TextInput
-                  value={carNumber}
-                  onChangeText={setCarNumber}
-                  placeholder="GJ01AB1234"
-                  placeholderTextColor={PLACEHOLDER_COLOR}
-                  style={styles.input}
-                  autoCapitalize="characters"
-                />
-              </View>
-
-              <View style={styles.formGroup}>
+              {/* <View style={styles.formGroup}>
                 <Text style={styles.label}>Password *</Text>
                 <TextInput
                   value={password}
@@ -120,20 +100,7 @@ export function SignupScreen({ navigation }: Props) {
                   secureTextEntry
                   style={styles.input}
                 />
-              </View>
-
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Email (Optional)</Text>
-                <TextInput
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="you@example.com"
-                  placeholderTextColor={PLACEHOLDER_COLOR}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  style={styles.input}
-                />
-              </View>
+              </View> */}
 
               {!!error && <Text style={styles.errorText}>{error}</Text>}
 
@@ -149,9 +116,10 @@ export function SignupScreen({ navigation }: Props) {
                   <Text style={styles.linkText}>Log in</Text>
                 </Pressable>
               </View>
+
             </View>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </ImageBackground>
   );
@@ -167,83 +135,45 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: 'rgba(13, 42, 86, 0.65)',
-  },
   keyboard: {
     flex: 1,
   },
-  container: {
-    flex: 1,
+  scroll: {
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 24,
   },
-  content: {
-    gap: 28,
+  container: {
+    width: '100%',
+    maxWidth: 420,
+    alignSelf: 'center',
   },
   hero: {
     gap: 12,
-    maxWidth: 420,
     marginBottom: 40,
   },
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: cngColors.border,
-    color: cngColors.textOnDark,
-    fontWeight: '600',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    backgroundColor: 'rgba(15, 157, 88, 0.25)',
-  },
   heroTitle: {
-    fontSize: 48,
+    fontSize: 42,
     fontWeight: '800',
     color: cngColors.textOnDark,
-    lineHeight: 56,
+    lineHeight: 50,
+    textAlign: 'center',
   },
   heroSubtitle: {
     fontSize: 16,
     color: cngColors.textMuted,
-    lineHeight: 24,
+    textAlign: 'center',
   },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderRadius: 24,
-    padding: 28,
-    gap: 18,
+    borderRadius: 20,
+    padding: 24,
+    gap: 20,
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 10 },
     elevation: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
-  },
-  kicker: {
-    color: cngColors.accentSoft,
-    fontSize: 13,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1.1,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: cngColors.textOnDark,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: cngColors.textMuted,
-    lineHeight: 22,
   },
   formGroup: {
     gap: 6,
@@ -262,27 +192,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1F2937',
     backgroundColor: '#F9FAFB',
-  },
-  primaryButton: {
-    marginTop: 12,
-    backgroundColor: cngColors.primary,
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-    shadowColor: '#16a34a',
-    shadowOpacity: 0.45,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 10,
-  },
-  primaryButtonText: {
-    color: '#032917',
-    fontWeight: '600',
-    fontSize: 16,
-    letterSpacing: 0.4,
-  },
-  disabledButton: {
-    opacity: 0.6,
   },
   footer: {
     flexDirection: 'row',

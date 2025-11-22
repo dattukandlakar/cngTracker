@@ -8,6 +8,7 @@ import {
   Text,
   TextInput,
   View,
+  ScrollView,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { loginUser } from '../store/authSlice';
@@ -34,7 +35,6 @@ export function LoginScreen({ navigation }: Props) {
 
   const isLoading = status === 'loading';
 
-  // Navigate to Home when user is logged in
   useEffect(() => {
     if (user) {
       navigation.replace('Home');
@@ -42,13 +42,8 @@ export function LoginScreen({ navigation }: Props) {
   }, [user, navigation]);
 
   const handleSubmit = async () => {
-    if (isLoading) {
-      return;
-    }
-
-    if (!mobile.trim() || !password.trim()) {
-      return;
-    }
+    if (isLoading) return;
+    if (!mobile.trim()) return;
 
     await dispatch(loginUser({ mobile, password }));
   };
@@ -57,14 +52,14 @@ export function LoginScreen({ navigation }: Props) {
     <ImageBackground source={CNG_BACKGROUND_IMAGE} style={styles.background} imageStyle={styles.backgroundImage}>
       <KeyboardAvoidingView
         style={styles.keyboard}
-        behavior={Platform.select({ ios: 'padding', android: undefined })}>
-        <View style={styles.container}>
-          <View style={styles.content}>
+        behavior={Platform.select({ ios: 'padding', android: undefined })}
+      >
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={styles.container}>
+            
             <View style={styles.hero}>
               <Text style={styles.heroTitle}>Welcome Back</Text>
-              <Text style={styles.heroSubtitle}>
-                Sign in to continue to CNG Tracker
-              </Text>
+              <Text style={styles.heroSubtitle}>Sign in to continue to CNG Tracker</Text>
             </View>
 
             <View style={styles.card}>
@@ -82,7 +77,7 @@ export function LoginScreen({ navigation }: Props) {
                 />
               </View>
 
-              <View style={styles.formGroup}>
+              {/* <View style={styles.formGroup}>
                 <Text style={styles.label}>Password</Text>
                 <TextInput
                   value={password}
@@ -92,7 +87,7 @@ export function LoginScreen({ navigation }: Props) {
                   secureTextEntry
                   style={styles.input}
                 />
-              </View>
+              </View> */}
 
               {!!error && <Text style={styles.errorText}>{error}</Text>}
 
@@ -108,9 +103,11 @@ export function LoginScreen({ navigation }: Props) {
                   <Text style={styles.linkText}>Sign up</Text>
                 </Pressable>
               </View>
+
             </View>
+
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </ImageBackground>
   );
@@ -126,83 +123,45 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: 'rgba(13, 42, 86, 0.65)',
-  },
   keyboard: {
     flex: 1,
   },
-  container: {
-    flex: 1,
+  scroll: {
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 24,
   },
-  content: {
-    gap: 28,
+  container: {
+    width: '100%',
+    maxWidth: 420,
+    alignSelf: 'center',
   },
   hero: {
     gap: 12,
-    maxWidth: 420,
     marginBottom: 40,
   },
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: cngColors.border,
-    color: cngColors.textOnDark,
-    fontWeight: '600',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    backgroundColor: 'rgba(255, 255, 255, 0.14)',
-  },
   heroTitle: {
-    fontSize: 48,
+    fontSize: 42,
     fontWeight: '800',
     color: cngColors.textOnDark,
-    lineHeight: 56,
+    lineHeight: 50,
+    textAlign: 'center',
   },
   heroSubtitle: {
     fontSize: 16,
     color: cngColors.textMuted,
-    lineHeight: 24,
+    textAlign: 'center',
   },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderRadius: 24,
-    padding: 28,
+    borderRadius: 20,
+    padding: 24,
     gap: 20,
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 10 },
     elevation: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
-  },
-  kicker: {
-    color: cngColors.accentSoft,
-    fontSize: 13,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1.1,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: cngColors.textOnDark,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: cngColors.textMuted,
-    lineHeight: 22,
   },
   formGroup: {
     gap: 6,
@@ -221,27 +180,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1F2937',
     backgroundColor: '#F9FAFB',
-  },
-  primaryButton: {
-    marginTop: 12,
-    backgroundColor: cngColors.primary,
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-    shadowColor: '#30ce21a9',
-    shadowOpacity: 0.45,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 10,
-  },
-  primaryButtonText: {
-    color: '#032917',
-    fontWeight: '600',
-    fontSize: 16,
-    letterSpacing: 0.4,
-  },
-  disabledButton: {
-    opacity: 0.6,
   },
   footer: {
     flexDirection: 'row',

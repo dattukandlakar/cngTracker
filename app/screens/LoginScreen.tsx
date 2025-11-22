@@ -15,6 +15,7 @@ import { loginUser } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
 import { GradientButton } from '../components/GradientButton';
+import { scale, verticalScale, moderateScale, fontScale } from '../../utils/responsive';
 
 type AuthStackParamList = {
   Signup: undefined;
@@ -129,79 +130,79 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 24,
+    padding: moderateScale(24),
   },
   container: {
     width: '100%',
-    maxWidth: 420,
+    maxWidth: moderateScale(420),
     alignSelf: 'center',
   },
   hero: {
-    gap: 12,
-    marginBottom: 40,
+    gap: moderateScale(12),
+    marginBottom: moderateScale(40),
   },
   heroTitle: {
-    fontSize: 42,
+    fontSize: fontScale(42),
     fontWeight: '800',
     color: cngColors.textOnDark,
-    lineHeight: 50,
+    lineHeight: moderateScale(50),
     textAlign: 'center',
   },
   heroSubtitle: {
-    fontSize: 16,
+    fontSize: fontScale(16),
     color: cngColors.textMuted,
     textAlign: 'center',
   },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderRadius: 20,
-    padding: 24,
-    gap: 20,
+    borderRadius: moderateScale(20),
+    padding: moderateScale(24),
+    gap: moderateScale(20),
     shadowColor: '#000',
     shadowOpacity: 0.15,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: moderateScale(20),
+    shadowOffset: { width: 0, height: moderateScale(10) },
     elevation: 10,
   },
   formGroup: {
-    gap: 6,
+    gap: moderateScale(6),
   },
   label: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontWeight: '600',
     letterSpacing: 0.3,
     color: '#4F46E5',
   },
   input: {
-    borderWidth: 2,
+    borderWidth: moderateScale(2),
     borderColor: '#E0E7FF',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    fontSize: fontScale(16),
     color: '#1F2937',
     backgroundColor: '#F9FAFB',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 4,
-    marginTop: 8,
+    gap: moderateScale(4),
+    marginTop: moderateScale(8),
   },
   footerText: {
     color: '#6B7280',
-    fontSize: 15,
+    fontSize: fontScale(15),
   },
   linkText: {
     color: '#2563EB',
     fontWeight: '600',
-    fontSize: 15,
+    fontSize: fontScale(15),
   },
   errorText: {
     color: cngColors.error,
     fontWeight: '600',
     backgroundColor: 'rgba(248, 113, 113, 0.12)',
-    padding: 8,
-    borderRadius: 8,
-    fontSize: 13,
+    padding: moderateScale(8),
+    borderRadius: moderateScale(8),
+    fontSize: fontScale(13),
   },
 });

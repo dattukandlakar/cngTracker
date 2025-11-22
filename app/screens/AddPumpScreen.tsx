@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Geolocation from '@react-native-community/geolocation';
 import { GradientButton } from '../components/GradientButton';
 import { cngColors } from '../theme/cngTheme';
+import { scale, verticalScale, moderateScale, fontScale } from '../../utils/responsive';
 
 export function AddPumpScreen({ navigation }:any) {
   const [pumpName, setPumpName] = useState('');
@@ -140,7 +141,7 @@ export function AddPumpScreen({ navigation }:any) {
             <Text style={styles.backButtonText}>←</Text>
           </Pressable>
           <Text style={styles.headerTitle}>{isEditing ? 'Update Pump' : 'Add Pump Details'}</Text>
-          <View style={{ width: 40 }} />
+          <View style={{ width: moderateScale(40) }} />
         </View>
 
         {/* Form */}
@@ -303,124 +304,124 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
     flexDirection: 'row', justifyContent: 'space-between',
-    alignItems: 'center', paddingHorizontal: 24,
-    paddingTop: 16, paddingBottom: 20,
+    alignItems: 'center', paddingHorizontal: moderateScale(24),
+    paddingTop: moderateScale(16), paddingBottom: moderateScale(20),
   },
-  backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  backButtonText: { fontSize: 24, color: cngColors.textOnDark, fontWeight: '600' },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: cngColors.textOnDark },
-  formContainer: { paddingHorizontal: 24, flex: 1 },
+  backButton: { width: moderateScale(40), height: moderateScale(40), justifyContent: 'center', alignItems: 'center' },
+  backButtonText: { fontSize: fontScale(24), color: cngColors.textOnDark, fontWeight: '600' },
+  headerTitle: { fontSize: fontScale(20), fontWeight: '700', color: cngColors.textOnDark },
+  formContainer: { paddingHorizontal: moderateScale(24), flex: 1 },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: fontScale(18),
     fontWeight: '700',
     color: cngColors.textOnDark,
-    marginBottom: 16,
-    marginTop: 8,
+    marginBottom: moderateScale(16),
+    marginTop: moderateScale(8),
   },
   input: {
     backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    marginBottom: moderateScale(16),
     color: cngColors.textOnDark,
-    fontSize: 16,
+    fontSize: fontScale(16),
   },
   textArea: {
-    height: 100,
+    height: moderateScale(100),
     textAlignVertical: 'top',
   },
 
   /* Location Button */
   locationButton: {
     backgroundColor: '#4E9F8E',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
+    padding: moderateScale(16),
+    borderRadius: moderateScale(12),
+    marginBottom: moderateScale(16),
     alignItems: 'center',
   },
   locationButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: fontScale(16),
     fontWeight: '700',
   },
   locationContainer: {
     backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    marginBottom: moderateScale(16),
   },
   locationText: {
     color: '#fff',
-    fontSize: 16,
-    marginBottom: 4,
+    fontSize: fontScale(16),
+    marginBottom: moderateScale(4),
   },
   hardcodedText: {
     color: '#fbbf24',
-    fontSize: 14,
+    fontSize: fontScale(14),
     fontStyle: 'italic',
-    marginTop: 8,
+    marginTop: moderateScale(8),
   },
   
   /* Pump Card */
   pumpCard: {
     backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
+    borderRadius: moderateScale(16),
+    padding: moderateScale(20),
+    marginBottom: moderateScale(20),
   },
   pumpName: {
-    fontSize: 20,
+    fontSize: fontScale(20),
     fontWeight: '700',
     color: cngColors.textOnDark,
-    marginBottom: 12,
+    marginBottom: moderateScale(12),
   },
   pumpDetail: {
-    fontSize: 16,
+    fontSize: fontScale(16),
     color: cngColors.textOnDark,
-    marginBottom: 8,
+    marginBottom: moderateScale(8),
   },
   
   /* Worker List */
   workerList: {
-    marginBottom: 20,
+    marginBottom: moderateScale(20),
   },
   workerCard: {
     backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    marginBottom: moderateScale(12),
   },
   workerDetail: {
-    fontSize: 16,
+    fontSize: fontScale(16),
     color: cngColors.textOnDark,
-    marginBottom: 4,
+    marginBottom: moderateScale(4),
   },
   noWorkersText: {
-    fontSize: 16,
+    fontSize: fontScale(16),
     color: cngColors.textMuted,
     fontStyle: 'italic',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: moderateScale(20),
   },
   
   /* Buttons */
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: moderateScale(20),
   },
   actionButton: {
     flex: 1,
-    marginHorizontal: 8,
+    marginHorizontal: moderateScale(8),
   },
   cancelButton: {
-    marginTop: 12,
-    padding: 16,
+    marginTop: moderateScale(12),
+    padding: moderateScale(16),
     alignItems: 'center',
   },
   cancelButtonText: {
     color: cngColors.textMuted,
-    fontSize: 16,
+    fontSize: fontScale(16),
     fontWeight: '600',
   },
   
@@ -432,41 +433,41 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: cngColors.primaryDark,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 24,
+    borderTopLeftRadius: moderateScale(20),
+    borderTopRightRadius: moderateScale(20),
+    padding: moderateScale(24),
     maxHeight: '50%',
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: moderateScale(20),
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: fontScale(20),
     fontWeight: '700',
     color: cngColors.textOnDark,
   },
   closeButton: {
-    width: 30,
-    height: 30,
+    width: moderateScale(30),
+    height: moderateScale(30),
     justifyContent: 'center',
     alignItems: 'center',
   },
   closeButtonText: {
     color: cngColors.textMuted,
-    fontSize: 24,
+    fontSize: fontScale(24),
   },
   modalInput: {
     backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    marginBottom: moderateScale(16),
     color: cngColors.textOnDark,
-    fontSize: 16,
+    fontSize: fontScale(16),
   },
   modalButton: {
-    marginTop: 8,
+    marginTop: moderateScale(8),
   },
 });

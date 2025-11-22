@@ -6,6 +6,7 @@ import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
 import { GradientButton } from '../components/GradientButton';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { isManager } from '../utils/roleUtils';
+import { scale, verticalScale, moderateScale, fontScale } from '../../utils/responsive';
 
 type ProfileStackParamList = {
   Profile: undefined;
@@ -119,117 +120,117 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingHorizontal: moderateScale(24),
+    paddingTop: moderateScale(16),
+    paddingBottom: moderateScale(16),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     
   },
   headerRightPlaceholder: {
-    width: 40,
+    width: moderateScale(40),
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: fontScale(24),
     fontWeight: '700',
     color: cngColors.textOnDark,
     textAlign: 'center',
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: moderateScale(40),
+    height: moderateScale(40),
     justifyContent: 'center',
     alignItems: 'center',
   },
   backButtonText: {
-    fontSize: 24,
+    fontSize: fontScale(24),
     color: cngColors.textOnDark,
     fontWeight: '600',
   },
   scrollContent: {
-    padding: 24,
-    paddingTop: 8,
-    gap: 20,
+    padding: moderateScale(24),
+    paddingTop: moderateScale(8),
+    gap: moderateScale(20),
   },
   profileCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: moderateScale(16),
+    padding: moderateScale(20),
     shadowColor: '#000',
     shadowOpacity: 0.2,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
+    shadowRadius: moderateScale(16),
+    shadowOffset: { width: 0, height: moderateScale(8) },
     elevation: 12,
   },
   profileCardContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: moderateScale(16),
   },
   profileSection: {
     alignItems: 'center',
-    gap: 8,
-    paddingVertical: 20,
+    gap: moderateScale(8),
+    paddingVertical: moderateScale(20),
   },
   avatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: moderateScale(70),
+    height: moderateScale(70),
+    borderRadius: moderateScale(35),
     backgroundColor: '#0EA5E9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarText: {
-    fontSize: 32,
+    fontSize: fontScale(32),
     fontWeight: '700',
     color: '#FFFFFF',
   },
   profileInfo: {
     flex: 1,
-    gap: 4,
+    gap: moderateScale(4),
   },
   profileName: {
-    fontSize: 18,
+    fontSize: fontScale(18),
     fontWeight: '700',
     color: '#1F2937',
   },
   profileId: {
-    fontSize: 12,
+    fontSize: fontScale(12),
     color: '#6B7280',
   },
   profileMobile: {
-    fontSize: 13,
+    fontSize: fontScale(13),
     color: '#6B7280',
   },
   editButton: {
     backgroundColor: '#0EA5E9',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 16,
+    paddingHorizontal: moderateScale(16),
+    paddingVertical: moderateScale(8),
+    borderRadius: moderateScale(16),
   },
   editButtonText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: fontScale(13),
     fontWeight: '600',
   },
   section: {
-    gap: 12,
+    gap: moderateScale(12),
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingLeft: 4,
+    paddingLeft: moderateScale(4),
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: fontScale(18),
     fontWeight: '700',
     color: cngColors.textOnDark,
   },
   detailCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 16,
+    borderRadius: moderateScale(16),
     padding: 0,
     overflow: 'hidden',
   },
@@ -237,29 +238,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingVertical: moderateScale(16),
+    paddingHorizontal: moderateScale(20),
   },
   detailLabel: {
-    fontSize: 15,
+    fontSize: fontScale(15),
     color: '#6B7280',
     fontWeight: '500',
   },
   detailValue: {
-    fontSize: 15,
+    fontSize: fontScale(15),
     color: '#1F2937',
     fontWeight: '600',
   },
   separator: {
     height: 1,
     backgroundColor: '#E5E7EB',
-    marginHorizontal: 20,
+    marginHorizontal: moderateScale(20),
   },
   managerSection: {
-    marginBottom: 12,
+    marginBottom: moderateScale(12),
   },
   logoutSection: {
     marginBottom: 0,
   },
 });
-

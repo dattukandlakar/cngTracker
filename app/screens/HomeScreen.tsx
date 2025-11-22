@@ -5,6 +5,7 @@ import { CNG_BACKGROUND_IMAGE, cngColors } from '../theme/cngTheme';
 import { GradientButton } from '../components/GradientButton';
 import { useAppSelector } from '../store';
 import { isManager, isOperator } from '../utils/roleUtils';
+import { scale, verticalScale, moderateScale, fontScale } from '../../utils/responsive';
 
 type HomeStackParamList = {
   Home: undefined;
@@ -94,64 +95,64 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    padding: 24,
-    paddingBottom: 40,
+    padding: moderateScale(24),
+    paddingBottom: moderateScale(40),
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 20,
+    paddingTop: moderateScale(20),
   },
   bottomSection: {
-    gap: 12,
+    gap: moderateScale(12),
     alignItems: 'center',
   },
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: moderateScale(8),
   },
   leafIcon: {
-    fontSize: 28,
+    fontSize: fontScale(28),
     color: cngColors.primary,
-    marginTop: 2,
+    marginTop: moderateScale(2),
   },
   brandTitle: {
-    fontSize: 24,
+    fontSize: fontScale(24),
     fontWeight: '700',
     color: cngColors.textOnDark,
     letterSpacing: 0.5,
   },
   profileButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
   profileButtonText: {
-    fontSize: 20,
+    fontSize: fontScale(20),
     color: cngColors.textOnDark,
   },
   ctaSubtitle: {
-    marginTop: 12,
+    marginTop: moderateScale(12),
     color: cngColors.textMuted,
-    fontSize: 15,
+    fontSize: fontScale(15),
     alignSelf: 'center',
   },
   managerButton: {
-    marginTop: 20,
+    marginTop: moderateScale(20),
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 28,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    borderRadius: moderateScale(28),
+    paddingVertical: moderateScale(12),
+    paddingHorizontal: moderateScale(24),
     alignItems: 'center',
   },
   managerButtonText: {
     color: cngColors.textOnDark,
     fontWeight: '600',
-    fontSize: 16,
+    fontSize: fontScale(16),
   },
 });

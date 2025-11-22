@@ -17,6 +17,7 @@ import { PumpCard } from '../components/PumpCard';
 import { cngColors } from '../theme/cngTheme';
 import { useAppSelector } from '../store';
 import { isManager } from '../utils/roleUtils';
+import { scale, verticalScale, moderateScale, fontScale } from '../../utils/responsive';
 
 type HomeStackParamList = {
   Home: undefined;
@@ -162,55 +163,55 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 20,
+    paddingHorizontal: moderateScale(24),
+    paddingTop: moderateScale(16),
+    paddingBottom: moderateScale(20),
   },
   headerContent: {
     flex: 1,
     alignItems: 'center',
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: fontScale(14),
     color: cngColors.textMuted,
-    marginTop: 4,
+    marginTop: moderateScale(4),
   },
   managerButton: {
-    width: 40,
-    height: 40,
+    width: moderateScale(40),
+    height: moderateScale(40),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 20,
+    borderRadius: moderateScale(20),
   },
   managerButtonText: {
-    fontSize: 20,
+    fontSize: fontScale(20),
     color: cngColors.textOnDark,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: moderateScale(40),
+    height: moderateScale(40),
     justifyContent: 'center',
     alignItems: 'center',
   },
   backButtonText: {
-    fontSize: 24,
+    fontSize: fontScale(24),
     color: cngColors.textOnDark,
     fontWeight: '600',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: fontScale(20),
     fontWeight: '700',
     color: cngColors.textOnDark,
   },
   placeholder: {
-    width: 40,
+    width: moderateScale(40),
   },
   mapContainer: {
-    height: 200,
-    marginHorizontal: 24,
-    marginBottom: 16,
-    borderRadius: 16,
+    height: moderateScale(200),
+    marginHorizontal: moderateScale(24),
+    marginBottom: moderateScale(16),
+    borderRadius: moderateScale(16),
     overflow: 'hidden',
     backgroundColor: '#E8F4F8',
   },
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   listContent: {
-    padding: 24,
-    paddingTop: 8,
+    padding: moderateScale(24),
+    paddingTop: moderateScale(8),
   },
 });

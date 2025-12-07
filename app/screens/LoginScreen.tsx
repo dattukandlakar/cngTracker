@@ -20,7 +20,6 @@ import { scale, verticalScale, moderateScale, fontScale } from '../../utils/resp
 type AuthStackParamList = {
   Signup: undefined;
   Login: undefined;
-  Home: undefined;
 };
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
@@ -32,21 +31,22 @@ export function LoginScreen({ navigation }: Props) {
   const { status, error, user } = useAppSelector(state => state.auth);
 
   const [mobile, setMobile] = useState('');
-  const [password, setPassword] = useState('');
 
   const isLoading = status === 'loading';
 
   useEffect(() => {
     if (user) {
-      navigation.replace('Home');
+      // User is authenticated, but we need to navigate to the main app
+      // Since this is within the AuthNavigator, we can't directly navigate to Home
+      // The AppNavigator will automatically switch to MainNavigator when user exists
     }
-  }, [user, navigation]);
+  }, [user]);
 
   const handleSubmit = async () => {
     if (isLoading) return;
     if (!mobile.trim()) return;
 
-    await dispatch(loginUser({ mobile, password }));
+    await dispatch(loginUser({ mobile }));
   };
 
   return (
@@ -77,18 +77,6 @@ export function LoginScreen({ navigation }: Props) {
                   maxLength={10}
                 />
               </View>
-
-              {/* <View style={styles.formGroup}>
-                <Text style={styles.label}>Password</Text>
-                <TextInput
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="••••••••"
-                  placeholderTextColor={PLACEHOLDER_COLOR}
-                  secureTextEntry
-                  style={styles.input}
-                />
-              </View> */}
 
               {!!error && <Text style={styles.errorText}>{error}</Text>}
 

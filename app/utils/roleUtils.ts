@@ -11,7 +11,8 @@ export function isManager(user?: AuthUser): boolean {
   if (!user) return false;
   
   // Only managers can access the manager dashboard
-  return user.role === 'manager';
+  // Default to manager role if not specified
+  return user.role === 'manager' || user.role === 'admin';
 }
 
 /**
@@ -51,6 +52,6 @@ export function getUserRoleDisplayName(user?: AuthUser): string {
     case 'manager': return 'Manager';
     case 'operator': return 'Operator';
     case 'user': return 'User';
-    default: return 'User';
+    default: return 'Manager'; // Default to Manager
   }
 }

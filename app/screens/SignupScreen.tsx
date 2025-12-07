@@ -20,7 +20,6 @@ import { scale, verticalScale, moderateScale, fontScale } from '../../utils/resp
 type AuthStackParamList = {
   Signup: undefined;
   Login: undefined;
-  Home: undefined;
 };
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Signup'>;
@@ -34,6 +33,7 @@ export function SignupScreen({ navigation }: Props) {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
+  const [signupSuccess, setSignupSuccess] = useState(false);
 
   const isLoading = status === 'loading';
 
@@ -46,7 +46,12 @@ export function SignupScreen({ navigation }: Props) {
     );
 
     if (signupUser.fulfilled.match(result)) {
-      navigation.replace('Login');
+      setSignupSuccess(true);
+      // Clear the success message after 3 seconds and navigate to login
+      setTimeout(() => {
+        setSignupSuccess(false);
+        navigation.replace('Login');
+      }, 3000);
     }
   };
 
@@ -104,6 +109,8 @@ export function SignupScreen({ navigation }: Props) {
               </View> */}
 
               {!!error && <Text style={styles.errorText}>{error}</Text>}
+              
+              {signupSuccess && <Text style={styles.successText}>Signup successful! Please login with your credentials.</Text>}
 
               <GradientButton
                 title={isLoading ? 'Creating Account...' : 'Create Account'}
@@ -216,5 +223,14 @@ const styles = StyleSheet.create({
     padding: moderateScale(8),
     borderRadius: moderateScale(8),
     fontSize: fontScale(13),
+  },
+  successText: {
+    color: cngColors.success,
+    fontWeight: '600',
+    backgroundColor: 'rgba(72, 187, 120, 0.12)',
+    padding: moderateScale(8),
+    borderRadius: moderateScale(8),
+    fontSize: fontScale(13),
+    textAlign: 'center',
   },
 });

@@ -1,6 +1,13 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getDeviceId } from '../utils/deviceId';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { UserRole } from '../types/roles';
+import apiClient from '../services/api';
+import { SignupRequest, SignupResponse, LoginRequest, LoginResponse } from '../types/auth';
+
+// Define a separate type for signup response that doesn't include full user details
+type SignupSuccessResponse = {
+  success: boolean;
+  message: string;
+};
 
 type AuthUser = {
   id: string;
@@ -14,7 +21,6 @@ type AuthUser = {
 
 type LoginCredentials = {
   mobile: string;
-  password: string;
 };
 
 type SignupPayload = {
@@ -32,51 +38,56 @@ const initialState: AuthState = {
   status: 'idle',
 };
 
-const fakeNetworkCall = async () => {
-  await new Promise((resolve: any) => setTimeout(resolve, 750));
-};
-
+// Updated to use real API
 export const loginUser = createAsyncThunk<AuthUser, LoginCredentials>(
   'auth/loginUser',
-  async ({ mobile, password }) => {
-    // Get or generate device ID automatically
-    const deviceId = await getDeviceId();
-    
-    await fakeNetworkCall();
+  async ({ mobile }, { rejectWithValue }) => {
+    try {
+      // Prepare request data - deviceId will be added by interceptor
+      const requestData: Omit<LoginRequest, 'deviceId'> = {
+        mobileNumber: mobile,
+      };
 
-    // TODO: Replace with actual API call
-    // API should receive: { mobile, password, deviceId }
-    // deviceId is sent automatically, user never sees it
-
-    return {
-      id: 'user-001',
-      name: mobile, // Temporary: will be replaced with actual user data from API
-      mobile,
-      role: 'manager', // Default role, will be set by backend
-      deviceId,
-    };
+      // Make API call
+      const response = await apiClient.post<LoginResponse>('/auth/login', requestData);
+      
+      // Transform response to match AuthUser type
+      // Default to 'manager' role since API doesn't return role information
+      return {
+        id: response.data.id,
+        name: response.data.userName,
+        mobile: response.data.mobileNumber,
+        role: 'manager', // Default to manager role
+        deviceId: response.data.deviceId,
+      };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Login failed');
+    }
   },
 );
 
-export const signupUser = createAsyncThunk<AuthUser, SignupPayload>(
+// Updated to use real API - now returns a success indicator instead of full user details
+export const signupUser = createAsyncThunk<SignupSuccessResponse, SignupPayload>(
   'auth/signupUser',
-  async ({ name, mobile}) => {
-    // Get or generate device ID automatically
-    const deviceId = await getDeviceId();
-    
-    await fakeNetworkCall();
+  async ({ name, mobile }, { rejectWithValue }) => {
+    try {
+      // Prepare request data (deviceId will be added by interceptor)
+      const requestData: Omit<SignupRequest, 'deviceId'> = {
+        userName: name,
+        mobileNumber: mobile,
+      };
 
-    // TODO: Replace with actual API call
-    // API should receive: { name, mobile, carNumber, password, email?, deviceId }
-    // deviceId is sent automatically, user never sees it
-
-    return {
-      id: 'user-002',
-      name,
-      mobile,
-      role: 'operator', // Default role for testing, can be changed by admin later
-      deviceId,
-    };
+      // Make API call
+      await apiClient.post<SignupResponse>('/auth/register', requestData);
+      
+      // Return success response
+      return {
+        success: true,
+        message: 'Signup successful! Please login with your credentials.'
+      };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Signup failed');
+    }
   },
 );
 
@@ -105,19 +116,19 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'idle';
-        state.error = action.error.message || 'Login failed';
+        state.error = action.payload as string || 'Login failed';
       })
       .addCase(signupUser.pending, state => {
         state.status = 'loading';
         state.error = undefined;
       })
-      .addCase(signupUser.fulfilled, (state, action) => {
+      .addCase(signupUser.fulfilled, (state) => {
+        // Don't set user on signup, just keep success state
         state.status = 'idle';
-        state.user = action.payload;
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.status = 'idle';
-        state.error = action.error.message || 'Signup failed';
+        state.error = action.payload as string || 'Signup failed';
       });
   },
 });
@@ -127,5 +138,3 @@ export const { logout, clearError } = authSlice.actions;
 export type { AuthState, AuthUser };
 
 export default authSlice.reducer;
-
-
